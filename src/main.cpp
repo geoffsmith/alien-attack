@@ -4,6 +4,7 @@
 
 #include "planet.h"
 #include "renderable.h"
+#include "player.h"
 
 #include <list>
 #include <iostream>
@@ -12,12 +13,17 @@
 using namespace std;
 
 static list<Renderable *> renderables;
+static Player* player;
 static int pause_time = 50; // milliseconds
+static GLfloat light_position[] = { 20.0, 0.0, 20.0, 0.0 };
+
+void setupLighting();
 
 void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
 
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(1.5);
@@ -26,6 +32,14 @@ void init(void) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+
+    setupLighting();
+
+}
+
+void setupLighting() {
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
 }
 
 void init_objects() {
@@ -34,6 +48,9 @@ void init_objects() {
     // TODO: need to sort out the relative paths
     earth->setTexture("resources/earthmap1k.jpg");
     renderables.push_back(earth);
+
+    // Setup the player
+    player = new Player(12);
 }
 
 void reshape(int w, int h) {
@@ -53,7 +70,8 @@ void display(void) {
     glLoadIdentity(); // clear the matrix
 
     // Viewing transformation
-    gluLookAt(0.0, 16.0, -19.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    //gluLookAt(0.0, 5.0, -19.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    player->setCamera();
 
     // iterate through the renderables
     list<Renderable *>::iterator it = renderables.begin();
@@ -62,12 +80,16 @@ void display(void) {
         ++it;
     }
 
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
     // Swap and flush
     glutSwapBuffers();
     glDisable(GL_TEXTURE_2D);
 }
 
 void move(int i) {
+    player->moveForward();
+
     // Mark the normal plane of the current window as needing to be redisplayed
     glutPostRedisplay();
 
@@ -75,6 +97,19 @@ void move(int i) {
     glutTimerFunc(pause_time, move, 0);
 }
 
+/**
+ * Take keyboard input
+ */
+void keyboardInput(unsigned char key, int x, int y) {
+}
+
+void specialKeyInput(int key, int x, int y) {
+    if (key == GLUT_KEY_RIGHT) {
+        player->moveLaterally(1);
+    } else if (key == GLUT_KEY_LEFT) {
+        player->moveLaterally(-1);
+    }
+}
 
 int main(int argc, char** argv) {
 
@@ -95,6 +130,8 @@ int main(int argc, char** argv) {
     // Register a display callback function
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboardInput);
+    glutSpecialFunc(specialKeyInput);
 
     // Register an idle callback function for animations
     //glutIdleFunc(idle);

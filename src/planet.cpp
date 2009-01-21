@@ -23,8 +23,15 @@ void Planet::render() {
     }
 
     gluQuadricNormals(quad, GL_TRUE);
+
     // Rotate the sphere depeding on current time
     glRotatef(this->_getRotation(), 0, 1, 0);
+
+    glColor3f(0, 1, 0);
+    glBegin(GL_LINES);
+    glVertex3f(0, this->_radius + 50, 0);
+    glVertex3f(0, this->_radius - 50, 0);
+    glEnd();
 
     glRotatef(90, 1, 0, 0);
 
@@ -47,14 +54,15 @@ Planet::Planet(int radius, float center_x, float center_y, float center_z) {
     this->_texture = NULL;
 
     // One minute per rotation
-    this->_secondsPerRotation = 60;
+    this->_secondsPerRotation = 10;
 }
 
 float Planet::_getRotation() {
     time_t seconds;
-    seconds = time(NULL);
-    float result = (int)seconds % this->_secondsPerRotation;
-    result = result / this->_secondsPerRotation * 360;
+    seconds = clock();
+    float result = (int)seconds % (this->_secondsPerRotation * CLOCKS_PER_SEC);
+    result = result / (this->_secondsPerRotation * CLOCKS_PER_SEC) * 360;
+    result = 0;
     return result;
 }
 

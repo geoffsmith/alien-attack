@@ -10,8 +10,8 @@ default: $(TARGET)
 all: default
 
 $(TARGET): src/main.cpp src/planet.cpp src/renderable.h src/planet.h \
-	src/jpeg.h src/jpeg.cpp src/lib.h src/lib.cpp
-	$(CC) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp src/planet.cpp src/lib.cpp src/jpeg.cpp
+	src/jpeg.h src/jpeg.cpp src/lib.h src/lib.cpp src/player.h src/player.cpp
+	$(CC) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp src/planet.cpp src/lib.cpp src/jpeg.cpp src/player.cpp
 
 
 clean:
