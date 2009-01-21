@@ -2,7 +2,17 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 
+#include "planet.h"
+#include "renderable.h"
+
+#include <list>
+#include <iostream>
+
+
 using namespace std;
+
+static list<Renderable *> renderables;
+static int pause_time = 50; // milliseconds
 
 void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -16,6 +26,14 @@ void init(void) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+}
+
+void init_objects() {
+    renderables = list<Renderable *>();
+    Planet *earth = new Planet(10, 0, 0, 0);
+    // TODO: need to sort out the relative paths
+    earth->setTexture("resources/earthmap1k.jpg");
+    renderables.push_back(earth);
 }
 
 void reshape(int w, int h) {
@@ -37,10 +55,24 @@ void display(void) {
     // Viewing transformation
     gluLookAt(0.0, 16.0, -19.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
+    // iterate through the renderables
+    list<Renderable *>::iterator it = renderables.begin();
+    while (it != renderables.end()) {
+        (*it)->render();
+        ++it;
+    }
+
     // Swap and flush
     glutSwapBuffers();
-
     glDisable(GL_TEXTURE_2D);
+}
+
+void move(int i) {
+    // Mark the normal plane of the current window as needing to be redisplayed
+    glutPostRedisplay();
+
+    // do this again in pause msecs
+    glutTimerFunc(pause_time, move, 0);
 }
 
 
@@ -58,6 +90,7 @@ int main(int argc, char** argv) {
     // Create a window with given title
     glutCreateWindow("OpenGL tutorial 1");
     init();
+    init_objects();
 
     // Register a display callback function
     glutDisplayFunc(display);
@@ -65,7 +98,8 @@ int main(int argc, char** argv) {
 
     // Register an idle callback function for animations
     //glutIdleFunc(idle);
-    //glutTimerFunc(pause_time, move, 0);
+    glutTimerFunc(pause_time, move, 0);
+
 
     // Enter the main GLUT event processing loop
     glutMainLoop();

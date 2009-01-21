@@ -9,8 +9,10 @@ default: $(TARGET)
 
 all: default
 
-$(TARGET): 
-	$(CC) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp src/planet.cpp
+$(TARGET): src/main.cpp src/planet.cpp src/renderable.h src/planet.h \
+	src/jpeg.h src/jpeg.cpp src/lib.h src/lib.cpp
+	$(CC) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp src/planet.cpp src/lib.cpp src/jpeg.cpp
+
 
 clean:
 	-rm -f *.o $(TARGET)

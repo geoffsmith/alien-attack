@@ -1,7 +1,10 @@
+#pragma once
+
 /**
  * A renderable class
  */
 class Renderable {
     public:
-        void render();
+        virtual void render() = 0;
+        virtual ~Renderable() {};
 };
