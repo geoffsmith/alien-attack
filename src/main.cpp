@@ -2,24 +2,12 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 
-#include <planet.h>
-
-#include <list>
-#include <string>
-
 using namespace std;
 
-static list<Renderable *> renderables;
-
-void initObjects() {
-    renderables = new list<Renderable *>();
-    Planet *earth = new Planet(10, 0, 0, 0);
-    renderables.push_back(earth);
-}
-
-void initGlut(void) {
+void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_SMOOTH);
+    glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(1.5);
@@ -30,11 +18,7 @@ void initGlut(void) {
     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 }
 
-void displayGlut(void) {
-}
-
-
-void reshapeGlut(int w, int h) {
+void reshape(int w, int h) {
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -42,7 +26,25 @@ void reshapeGlut(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-int main(int argc, char **argv) {
+
+void display(void) {
+    // display the planets
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_TEXTURE_2D);
+    glColor3f(1.0, 1.0, 1.0);
+    glLoadIdentity(); // clear the matrix
+
+    // Viewing transformation
+    gluLookAt(0.0, 16.0, -19.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+    // Swap and flush
+    glutSwapBuffers();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+
+int main(int argc, char** argv) {
 
     // Extract any command line options intended for GLUT
     glutInit(&argc, argv);
@@ -55,11 +57,11 @@ int main(int argc, char **argv) {
 
     // Create a window with given title
     glutCreateWindow("OpenGL tutorial 1");
-    initGlut();
+    init();
 
     // Register a display callback function
-    glutDisplayFunc(displayGlut);
-    glutReshapeFunc(reshapeGlut);
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
 
     // Register an idle callback function for animations
     //glutIdleFunc(idle);

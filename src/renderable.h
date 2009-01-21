@@ -3,5 +3,5 @@
  */
 class Renderable {
     public:
-        virtual void render();
-}
+        void render();
+};

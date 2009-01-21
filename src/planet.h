@@ -11,4 +11,4 @@ class Planet : public Renderable {
     private:
         int _radius;
         vector<float> _center;
-}
+};
