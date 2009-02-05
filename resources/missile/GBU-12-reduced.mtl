@@ -1,0 +1,78 @@
+newmtl Back
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.59 0.59 0.59
+Tf 1.00 1.00 1.00
+map_Kd Back.jpg
+Ni 1.00
+Ks 0.90 0.90 0.90
+Ns 8.00
+newmtl Computer1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.59 0.59 0.59
+Tf 1.00 1.00 1.00
+map_Kd Computer.jpg
+bump CompB.jpg -bm 0
+Ni 1.00
+Ks 0.90 0.90 0.90
+Ns 8.00
+newmtl Fins
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.59 0.59 0.59
+Tf 1.00 1.00 1.00
+map_Kd Fins.jpg
+Ni 1.00
+Ks 0.90 0.90 0.90
+Ns 4.00
+newmtl Metal_Brushed
+illum 4
+Kd 0.76 0.77 0.75
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 1.00 1.00 1.00
+Ns 16.00
+newmtl NoseGuide
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 1.00 1.00 1.00
+Ns 32.00
+newmtl PopFins
+illum 4
+Kd 0.25 0.26 0.11
+Ka 0.25 0.26 0.11
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.90 0.90 0.90
+Ns 8.00
+newmtl Seeker
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.00 0.00 0.00
+Tf 0.23 0.23 0.23
+Ni 1.00
+Ks 1.00 1.00 1.00
+Ns 128.00
+newmtl SeekerHead1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.06 0.19 0.13
+Tf 1.00 1.00 1.00
+map_Kd Seeker.jpg
+Ni 1.00
+Ks 0.90 0.90 0.90
+Ns 11.31
+newmtl Warhead1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.59 0.59 0.59
+Tf 1.00 1.00 1.00
+map_Kd Warhead.jpg
+Ni 1.00
+Ks 0.90 0.90 0.90
+Ns 4.00

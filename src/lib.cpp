@@ -19,8 +19,6 @@ void load_texture(GLuint &tex_name, unsigned char *texture_image, const char *fi
     strcpy(file, filename);
     read_jpeg_file(file, &texture_image, cinfo);
 
-    cout << "Done loading texture\n";
-
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTexture(GL_TEXTURE_2D, tex_name);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -32,7 +30,11 @@ void load_texture(GLuint &tex_name, unsigned char *texture_image, const char *fi
             cinfo.image_height, 0, GL_RGB, GL_UNSIGNED_BYTE,
             texture_image);
 
-    cout << "Error: " << glGetError() << "\n";
+    GLuint error = glGetError();
+    if (error > 0) {
+        cout << "Texture Error: " << gluErrorString(error) << " (" << error << ") in texture " << filename << endl;
+    }
+}
 
-    cout << "Done configuring texture " << GL_RGB8 << "\n";
+void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]) {
 }

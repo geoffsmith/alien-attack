@@ -41,14 +41,8 @@ int read_jpeg_file( char *filename, unsigned char **raw_image, struct jpeg_decom
 	/* reading the image header which contains image information */
 	jpeg_read_header( &cinfo, TRUE );
 	/* Uncomment the following to output image information, if needed. */
-	printf( "JPEG File Information: \n" );
-	printf( "Image width and height: %d pixels and %d pixels.\n", cinfo.image_width, cinfo.image_height );
-	printf( "Color components per pixel: %d.\n", cinfo.num_components );
-	printf( "Color space: %d.\n", cinfo.jpeg_color_space );
 	/* Start decompression jpeg here */
 	jpeg_start_decompress( &cinfo );
-
-	printf( "Output width: %d and height %d.\n", cinfo.output_width, cinfo.output_height);
 
 	/* allocate memory to hold the uncompressed image */
 	raw_image2 = (unsigned char*)malloc( cinfo.output_width*cinfo.output_height*cinfo.num_components );

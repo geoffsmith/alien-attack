@@ -1,0 +1,16 @@
+newmtl Sfighter_03_CLR_tifSG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+# map_Kd Sfighter_03_CLR.bmp
+map_Kd tex.jpg
+Ni 1.00
+Ks 0.79 0.81 1.00
+newmtl blinn5SG
+illum 4
+Kd 0.35 0.45 0.50
+Ka 0.00 0.00 0.00
+Tf 0.51 0.51 0.51
+Ni 1.00
+Ks 0.79 0.82 1.00

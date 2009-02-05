@@ -8,6 +8,7 @@ using namespace std;
 class Planet : public Renderable {
     public:
         virtual void render();
+        virtual void renderShadow();
         Planet(int radius, float center_x, float center_y, float center_z);
         void setTexture(string path);
         ~Planet();
