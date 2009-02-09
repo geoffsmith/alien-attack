@@ -12,6 +12,8 @@
 
 using namespace std;
 
+GLfloat Player::scale = 0.00002;
+
 Player::Player(float altitude) {
     this->_altitude = altitude;
     this->_rotation = 0;
@@ -30,11 +32,11 @@ Player::Player(float altitude) {
     vector<GLfloat> leftExaust = this->_model->getVertex(1019);
     vector<GLfloat> rightExaust = this->_model->getVertex(2496);
     vector<GLfloat> normal; normal.push_back(0); normal.push_back(0); normal.push_back(-1);
-    ParticleSystem *particleSystem = new ParticleSystem(0.5);
+    ParticleSystem *particleSystem = new ParticleSystem(0.5, this);
     particleSystem->updatePosition(leftExaust, normal);
     this->_particleSystems.push_back(particleSystem);
 
-    particleSystem = new ParticleSystem(0.5);
+    particleSystem = new ParticleSystem(0.5, this);
     particleSystem->updatePosition(rightExaust, normal);
     this->_particleSystems.push_back(particleSystem);
 }
@@ -70,21 +72,36 @@ void Player::setCamera() {
 }
 
 void Player::render() {
+    // Render particle systems
+    list< ParticleSystem * >::iterator it = this->_particleSystems.begin();
+    for (; it != this->_particleSystems.end(); ++it) {
+        (*it)->render();
+    }
+
     // Move the model to the right place
     glPushMatrix();
-    glRotatef(-1 * this->_rotation - 7, 0, 1, 0);
+
+    Player::transformPlayer(this->_rotation, this->_sway, this->_lateralDelta, this->_altitude);
+    this->_renderLights();
+    this->_model->render();
+    glPopMatrix();
+
+}
+
+void Player::transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude) {
+    glRotatef(-1 * rotation - 7, 0, 1, 0);
 
     // Sway the craft
-    float sway = sin(this->_sway - 1) / 2;
-    glRotatef(-1 * this->_lateralDelta + sway, 1, 0, 0);
+    float _sway = sin(sway - 1) / 2;
+    glRotatef(-1 * lateralDelta + _sway, 1, 0, 0);
 
-    glTranslatef(0, 0, this->_altitude - 2);
+    glTranslatef(0, 0, altitude - 2);
     glRotatef(90, 1, 0, 0);
-    //glRotatef(-90, 0, 1, 0);
     glRotatef(-90, 0, 1, 0);
-    GLfloat scale = 0.00002;
-    glScalef(scale, scale, scale);
+    glScalef(Player::scale, Player::scale, Player::scale);
+}
 
+void Player::_renderLights() {
     // Get the right wing
     glPushMatrix();
     glPushAttrib(GL_LIGHTING_BIT);
@@ -122,17 +139,24 @@ void Player::render() {
     glPopAttrib();
     glPopAttrib();
     glPopMatrix();
-
-    // Render particle systems
-    list< ParticleSystem * >::iterator it = this->_particleSystems.begin();
-    for (; it != this->_particleSystems.end(); ++it) {
-        (*it)->render();
-    }
-
-    this->_model->render();
-    glPopMatrix();
 }
 
 float Player::getRotationRad() {
     return this->_rotation * PI / 180;
+}
+
+float Player::getRotation() {
+    return this->_rotation;
+}
+
+float Player::getAltitude() {
+    return this->_altitude;
+}
+
+float Player::getLateralDelta() {
+    return this->_lateralDelta;
+}
+
+float Player::getSway() {
+    return this->_sway;
 }

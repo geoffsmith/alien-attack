@@ -7,6 +7,8 @@
 
 using namespace std;
 
+class ParticleSystem;
+
 class Player : public Renderable {
 
     public:
@@ -15,8 +17,14 @@ class Player : public Renderable {
         void moveForward();
         void setCamera();
         float getRotationRad();
+        float getRotation();
+        float getAltitude();
+        float getLateralDelta();
+        float getSway();
         virtual void render();
         virtual void renderShadow() {};
+        static void transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude);
+        static float scale;
 
     private:
         float _altitude;
@@ -27,4 +35,5 @@ class Player : public Renderable {
         float _maxSway;
         Obj* _model;
         list< ParticleSystem* > _particleSystems;
+        void _renderLights();
 };

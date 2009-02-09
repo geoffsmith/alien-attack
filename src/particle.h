@@ -7,23 +7,28 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 
-#include "renderable.h"
+#include "player.h"
 
 using namespace std;
+
+class Player;
 
 struct Particle {
     GLfloat coord[3];
     GLfloat color[4];
     GLfloat time;
+    GLfloat rotation;
+    GLfloat sway;
+    GLfloat lateralDelta;
+    GLfloat altitude;
 };
 
-class ParticleSystem : public Renderable {
+class ParticleSystem {
 
     public:
-        ParticleSystem(GLfloat radius);
+        ParticleSystem(GLfloat radius, Player* player);
         void updatePosition(vector<GLfloat> center, vector<GLfloat> normal);
-        virtual void render();
-        virtual void renderShadow() {};
+        void render();
 
     private:
         list<Particle *> _particles;
@@ -57,4 +62,7 @@ class ParticleSystem : public Renderable {
          * Update the particle age, position and colour
          */
         void _updateParticles();
+
+        // Keep track of the player so that we can store the particle's first position
+        Player* _player;
 };

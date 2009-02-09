@@ -109,7 +109,7 @@ void ParticleSystem::updatePosition(vector<GLfloat> center, vector<GLfloat> norm
     applyMatrixMatrix(yRotation, this->_particleTransform);
 }
 
-ParticleSystem::ParticleSystem(GLfloat radius) {
+ParticleSystem::ParticleSystem(GLfloat radius, Player* player) {
     this->_radius = radius * 2000;
     this->_particleTTL = 10;
     this->_particleDelta = 0.01;
@@ -127,6 +127,8 @@ ParticleSystem::ParticleSystem(GLfloat radius) {
     this->_startColors[1][3] = 1;
 
     this->_multiplier = 200000;
+
+    this->_player = player;
 }
 
 
@@ -138,14 +140,25 @@ void ParticleSystem::render() {
     list< Particle * >::iterator it = this->_particles.begin();
     Particle *particle;
     glPushAttrib(GL_LIGHTING_BIT);
+    glPushMatrix();
+
+    // Transform into player coords
+    Player::transformPlayer(this->_player->getRotation(), this->_player->getSway(), this->_player->getLateralDelta(), this->_player->getAltitude());
+    
     glBegin(GL_POINTS);
     for (; it != this->_particles.end(); ++it) {
         particle = *it;
+
+
         glColor4f(particle->color[0], particle->color[1], particle->color[2], particle->color[3]);
         glVertex3f(particle->coord[0], particle->coord[1], particle->coord[2]);
+
     }
     glEnd();
+
+    glPopMatrix();
     glPopAttrib();
+
     glEnable(GL_LIGHTING);
 }
 
@@ -201,6 +214,12 @@ void ParticleSystem::_initParticle(Particle *particle) {
 
     // Reset the time
     particle->time = 0;
+
+    // Set the current params of the player
+    particle->rotation = this->_player->getRotation();
+    particle->altitude = this->_player->getAltitude();
+    particle->lateralDelta = this->_player->getLateralDelta();
+    particle->sway = this->_player->getSway();
 }
 
 void ParticleSystem::_updateParticles() {
