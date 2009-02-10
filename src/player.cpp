@@ -39,6 +39,8 @@ Player::Player(float altitude) {
     particleSystem = new ParticleSystem(0.5, this);
     particleSystem->updatePosition(rightExaust, normal);
     this->_particleSystems.push_back(particleSystem);
+
+    this->_modelViewMatrix = NULL;
 }
 
 void Player::moveLaterally(float lateralMovement) {
@@ -82,10 +84,19 @@ void Player::render() {
     glPushMatrix();
 
     Player::transformPlayer(this->_rotation, this->_sway, this->_lateralDelta, this->_altitude);
+    // Save the transformation matrix
+    if (this->_modelViewMatrix == NULL) {
+        this->_modelViewMatrix = new float[16];
+    }
+
+    glGetFloatv(GL_MODELVIEW_MATRIX, this->_modelViewMatrix);
+
     this->_renderLights();
     this->_model->render();
     glPopMatrix();
 
+    // Update the bounds
+    this->_model->calculateBounds(this->_modelViewMatrix);
 }
 
 void Player::transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude) {
@@ -159,4 +170,11 @@ float Player::getLateralDelta() {
 
 float Player::getSway() {
     return this->_sway;
+}
+
+/******************************************************************************
+ * Collision Detection
+ *****************************************************************************/
+float* Player::getBounds() {
+    return this->_model->getBounds();
 }

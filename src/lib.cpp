@@ -38,3 +38,14 @@ void load_texture(GLuint &tex_name, unsigned char *texture_image, const char *fi
 
 void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]) {
 }
+
+void crossProduct(float* matrix, float* vector, float* result) {
+    float sum;
+    for (int i = 0; i < 4; ++i) {
+        sum = 0;
+        for (int j = 0; j < 4; ++j) {
+            sum += matrix[j * 4 + i] * vector[j];
+        }
+        result[i] = sum;
+    }
+}

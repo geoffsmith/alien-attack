@@ -79,6 +79,8 @@ Obj::Obj(const char *filename, unsigned int displayList) {
 
     // Create the display list
     this->_createDisplayList();
+
+    this->_bounds = NULL;
 }
 
 void Obj::_addVertex(string line) {
@@ -91,6 +93,7 @@ void Obj::_addVertex(string line) {
     }
 
     this->_vertices.push_back(vertex);
+    this->_verticesList.push_back(vertex);
 }
 
 void Obj::_addTextureCoord(string line) {
@@ -315,4 +318,71 @@ Material* Obj::_findMaterial(string name) {
         }
     }
     return 0;
+}
+
+float* Obj::getBounds() {
+    return this->_bounds;
+}
+
+void Obj::calculateBounds(float *transformationMatrix) {
+    // Transform all the vertices into the right space.
+    // ... and get the max / mins for each dimension
+    float* result = new float[4];
+    float* vertex = new float[4];
+    vector<GLfloat>* pointer;
+    vertex[3] = 1;
+
+    // Set up the default bounds
+    if (this->_bounds == NULL) {
+        this->_bounds = new float[6];
+    }
+
+    // We reset the bounds on the first iteration. This could be done by comparing
+    // it to vertices->begin() but this way should be faster.
+    bool resetBounds = true;
+
+    list< vector<GLfloat>* >::iterator it = this->_verticesList.begin();
+    for (; it != this->_verticesList.end(); ++it) {
+        pointer = *it;
+        
+        // Transform the vertex
+        vertex[0] = (*pointer)[0]; vertex[1] = (*pointer)[1]; vertex[2] = (*pointer)[2];
+        crossProduct(transformationMatrix, vertex, result);
+
+        // Reset the bounds on the first vertex
+        if (resetBounds) {
+            this->_bounds[0] = result[0];
+            this->_bounds[1] = result[0];
+            this->_bounds[2] = result[1];
+            this->_bounds[3] = result[1];
+            this->_bounds[4] = result[2];
+            this->_bounds[5] = result[2];
+            resetBounds = false;
+            continue;
+        }
+
+        // Check if it is the largest / smallest of each dimension
+        if (result[0] < this->_bounds[0]) {
+            this->_bounds[0] = result[0];
+        }
+        if (result[0] > this->_bounds[1]) {
+            this->_bounds[1] = result[0];
+        }
+        if (result[1] < this->_bounds[2]) {
+            this->_bounds[2] = result[1];
+        }
+        if (result[1] > this->_bounds[3]) {
+            this->_bounds[3] = result[1];
+        }
+        if (result[2] < this->_bounds[4]) {
+            this->_bounds[4] = result[2];
+        }
+        if (result[2] > this->_bounds[5]) {
+            this->_bounds[5] = result[2];
+        }
+    }
+
+    // clean up
+    delete vertex;
+    delete result;
 }

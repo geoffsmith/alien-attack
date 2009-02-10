@@ -1,16 +1,19 @@
 #include <vector>
 #include "renderable.h"
 #include "obj.h"
+#include "collision.h"
 
 using namespace std;
 
-class Opponent : public Renderable {
+class Opponent : public Renderable, public Collidable {
 
     public:
         Opponent();
         void moveForward();
         virtual void render();
         virtual void renderShadow() {};
+        float* getBounds();
+
         static Opponent* generate();
 
         // Probability of generating a new opponent on each cycle

@@ -139,11 +139,16 @@ void move(int i) {
         // Move all the opponents
         list< Opponent* >::iterator it = opponents.begin();
         for (; it != opponents.end(); ++it) {
+            // Check for collision with player
+            if (player->checkCollision((*it))) {
+                cout << "Detected collision!" << endl;
+            }
+
             (*it)->moveForward();
         }
 
         // Generate new opponents
-        if (opponents.size() < 10) {
+        if (opponents.size() < 5) {
             Opponent* newOpponent = Opponent::generate();
             if (newOpponent != NULL) {
                 opponents.push_back(newOpponent);

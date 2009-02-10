@@ -4,12 +4,13 @@
 #include "renderable.h"
 #include "obj.h"
 #include "particle.h"
+#include "collision.h"
 
 using namespace std;
 
 class ParticleSystem;
 
-class Player : public Renderable {
+class Player : public Renderable, public Collidable {
 
     public:
         Player(float altitude);
@@ -26,6 +27,9 @@ class Player : public Renderable {
         static void transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude);
         static float scale;
 
+        // Collision methods
+        float* getBounds();
+
     private:
         float _altitude;
         float _rotation;
@@ -36,4 +40,5 @@ class Player : public Renderable {
         Obj* _model;
         list< ParticleSystem* > _particleSystems;
         void _renderLights();
+        float* _modelViewMatrix;
 };

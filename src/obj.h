@@ -12,7 +12,6 @@
 
 /**
   * TODO:
-  *     * Optimise so that pointers are used instead of indices
   *     * Clean up faces when object is destroyed
   *     * Add other components to the Material
   *     * Clean up textures when they are loaded
@@ -40,6 +39,8 @@ class Obj {
         void render();
         vector<GLfloat> getVertex(const unsigned int index);
         string filename;
+        void calculateBounds(float *transformationMatrix);
+        float* getBounds();
 
         // A cache for loaded objects
         static list< Obj* > objectCache;
@@ -47,6 +48,7 @@ class Obj {
 
     private:
         vector< vector<GLfloat>* > _vertices;
+        list< vector<GLfloat>* > _verticesList;
         vector< vector<GLfloat>* > _textureCoords;
         vector< vector<GLfloat>* > _normals;
         list< Material * > _materials;
@@ -56,6 +58,9 @@ class Obj {
         void _addTextureCoord(string line);
         void _addNormal(string line);
         void _addFace(string line, Material* material);
+
+        // The bounds of this object (in world space)
+        float* _bounds;
 
         // The display list for this object
         unsigned int _displayList;
