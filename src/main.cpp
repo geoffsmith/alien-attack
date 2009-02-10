@@ -6,6 +6,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
+#include <FTGL/FTGLPixmapFont.h>
 
 #include "planet.h"
 #include "renderable.h"
@@ -15,8 +16,10 @@
 #include "opponent.h"
 
 #include <list>
+#include <sstream>
 #include <iostream>
 #include <time.h>
+#include <string>
 
 
 using namespace std;
@@ -28,8 +31,18 @@ static int pause_time = 50; // milliseconds
 static GLfloat light_position[] = { 0.0, 0.0, 20.0, 0 };
 static GLfloat moon_light_position[] = { 0, 0, -20, 0 };
 static bool doMove = true;
+static string fontPath = "resources/airstrip.ttf";
+static FTGLPixmapFont* font;
+static int score = 0;
 
 void setupLighting();
+
+void loadFont() {
+    font = new FTGLPixmapFont(fontPath.c_str());
+    if (font->Error()) {
+        cout << "There was an error loading the font: " << fontPath << endl;
+    }
+}
 
 void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -50,6 +63,8 @@ void init(void) {
     setupLighting();
 
     srand(clock());
+
+    loadFont();
 }
 
 void setupLighting() {
@@ -99,11 +114,44 @@ void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
+void renderScore() {
+
+    glDisable(GL_LIGHTING);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, 10, 0, 10, 0, 10);
+    glDisable(GL_DEPTH_TEST);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glColor4f(1, 0, 0, 1);
+
+    glRasterPos3f(0.5, 9, 0);
+    font->FaceSize(36);
+
+    stringstream outputStream;
+    outputStream << score;
+
+    font->Render(outputStream.str().c_str());
+
+    glMatrixMode(GL_PROJECTION);
+    glEnable(GL_DEPTH_TEST);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glEnable(GL_LIGHTING);
+}
 
 void display(void) {
     // display the planets
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
+
+    renderScore();
+
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix
 
@@ -127,12 +175,15 @@ void display(void) {
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glLightfv(GL_LIGHT1, GL_POSITION, moon_light_position);
 
+    renderScore();
+
     // Swap and flush
     glutSwapBuffers();
     glDisable(GL_TEXTURE_2D);
 }
 
 void move(int i) {
+
     if (doMove) {
         player->moveForward();
 
@@ -141,7 +192,7 @@ void move(int i) {
         for (; it != opponents.end(); ++it) {
             // Check for collision with player
             if (player->checkCollision((*it))) {
-                cout << "Detected collision!" << endl;
+                score += 100;
             }
 
             (*it)->moveForward();

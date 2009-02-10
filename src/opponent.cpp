@@ -12,7 +12,7 @@ Opponent::Opponent() {
     this->_model = Obj::makeObj("resources/missile/GBU-12-reduced.obj");
 
     // Set up the constants
-    this->_altitude = 12.5;
+    this->_altitude = 12.6;
     this->_rotation = rand() % 360;
     this->_lateralRotation = 10 - rand() % 20;
 
