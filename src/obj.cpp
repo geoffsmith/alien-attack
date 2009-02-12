@@ -347,7 +347,7 @@ void Obj::calculateBounds(float *transformationMatrix) {
         
         // Transform the vertex
         vertex[0] = (*pointer)[0]; vertex[1] = (*pointer)[1]; vertex[2] = (*pointer)[2];
-        crossProduct(transformationMatrix, vertex, result);
+        matrixMultiply(transformationMatrix, vertex, result);
 
         // Reset the bounds on the first vertex
         if (resetBounds) {

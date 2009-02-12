@@ -178,3 +178,21 @@ float Player::getSway() {
 float* Player::getBounds() {
     return this->_model->getBounds();
 }
+
+/******************************************************************************
+ * Guns
+ *****************************************************************************/
+float * Player::getGunPosition() {
+    float *result = new float[4];
+    float *tmp = new float[4];
+
+    vector<GLfloat> vertex = this->_model->getVertex(1);
+    tmp[0] = vertex[0];
+    tmp[1] = vertex[1];
+    tmp[2] = vertex[2];
+
+    // Transform the vertex with the current modelview matrix
+    matrixMultiply(this->_modelViewMatrix, tmp, result);
+
+    return result;
+}

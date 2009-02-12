@@ -1,6 +1,7 @@
 #include "lib.h"
 #include "jpeg.h"
 
+#include <math.h>
 #include <iostream>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -39,7 +40,7 @@ void load_texture(GLuint &tex_name, unsigned char *texture_image, const char *fi
 void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]) {
 }
 
-void crossProduct(float* matrix, float* vector, float* result) {
+void matrixMultiply(float* matrix, float* vector, float* result) {
     float sum;
     for (int i = 0; i < 4; ++i) {
         sum = 0;
@@ -48,4 +49,26 @@ void crossProduct(float* matrix, float* vector, float* result) {
         }
         result[i] = sum;
     }
+}
+
+void buildYRotationMatrix(float *matrix, float angle) {
+    matrix[0] = cos(angle);
+    matrix[1] = 0;
+    matrix[2] = -1 * sin(angle);
+    matrix[3] = 0;
+
+    matrix[4] = 0;
+    matrix[5] = 1;
+    matrix[6] = 0;
+    matrix[7] = 0;
+
+    matrix[8] = sin(angle);
+    matrix[9] = 0;
+    matrix[10] = cos(angle);
+    matrix[11] = 0;
+
+    matrix[12] = 0;
+    matrix[13] = 0;
+    matrix[14] = 0;
+    matrix[15] = 1;
 }

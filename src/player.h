@@ -30,6 +30,9 @@ class Player : public Renderable, public Collidable {
         // Collision methods
         float* getBounds();
 
+        // Get the position of the gun nozzle (for projectiles)
+        float* getGunPosition();
+
     private:
         float _altitude;
         float _rotation;

@@ -11,4 +11,5 @@ void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[
 /******************************************************************************
  * OpenGL vector math helpers
  *****************************************************************************/
-void crossProduct(float* matrix, float* vector, float* result);
+void matrixMultiply(float* matrix, float* vector, float* result);
+void buildYRotationMatrix(float *matrix, float angle);
