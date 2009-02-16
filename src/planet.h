@@ -1,7 +1,12 @@
+#pragma once
+
 #include "renderable.h"
+#include "matrix.h"
 #include <OpenGL/gl.h>
 #include <vector>
 #include <string>
+
+class Matrix;
 
 using namespace std;
 
@@ -24,5 +29,8 @@ class Planet : public Renderable {
 
         // Get the planet rotation
         float _getRotation();
+
+        // The planet's transformation
+        Matrix *_transformationMatrix;
 
 };

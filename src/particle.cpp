@@ -143,7 +143,7 @@ void ParticleSystem::render() {
     glPushMatrix();
 
     // Transform into player coords
-    Player::transformPlayer(this->_player->getRotation(), this->_player->getSway(), this->_player->getLateralDelta(), this->_player->getAltitude());
+    glMultMatrixf(this->_player->getTransformationMatrix()->getMatrix());
     
     glBegin(GL_POINTS);
     for (; it != this->_particles.end(); ++it) {

@@ -1,4 +1,7 @@
 #include "projectiles.h"
+#include <iostream>
+
+using namespace std;
 
 Projectiles::Projectiles(Player *player) {
     this->_player = player;
@@ -9,6 +12,7 @@ void Projectiles::_setStartPosition(Particle2 *particle) {
     float *gun = this->_player->getGunPosition();
 
     // Set this as the current position
+    cout << "Gun 0: " << gun[0] << endl;
     particle->position[0] = gun[0];
     particle->position[1] = gun[1];
     particle->position[2] = gun[2];
@@ -22,7 +26,7 @@ void Projectiles::_updateParticles() {
     float *position;
     float *rotationMatrix = new float[16];
 
-    buildYRotationMatrix(rotationMatrix, 1);
+    buildYRotationMatrix(rotationMatrix, 5);
 
     // Rotate every particle around the Y-axis a single step
     for (unsigned int i = 0; i < this->_maxParticles; ++i) {

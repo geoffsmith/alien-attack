@@ -221,7 +221,8 @@ void Obj::_createDisplayList() {
 
             texture = face->textures[j];
             if (texture != 0) {
-                glTexCoord2f((*texture)[0], (*texture)[1]);
+                // We need to convert obj texture corrdinates into openGL so X is 1 - X
+                glTexCoord2f((*texture)[0], 1 - (*texture)[1]);
             }
 
             vertex = face->vertices[j];

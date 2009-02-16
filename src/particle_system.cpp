@@ -1,8 +1,11 @@
 #include "particle_system.h"
 #include <stdlib.h>
+#include <iostream>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
+
+using namespace std;
 
 ParticleSystem2::ParticleSystem2() {
     // Set up the variables
@@ -85,4 +88,5 @@ void ParticleSystem2::tick() {
     for (unsigned int i = 0; i < this->_maxTicks; ++i) {
         particles[i].ticks++;
     }
+    this->_updateParticles();
 }

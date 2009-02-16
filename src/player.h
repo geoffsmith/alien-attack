@@ -1,3 +1,9 @@
+/**
+ * Class representing the player
+ *
+ * TODO:
+ *  * refactor transform player to not need arguments
+ */
 #pragma once
 
 #include <vector>
@@ -5,10 +11,13 @@
 #include "obj.h"
 #include "particle.h"
 #include "collision.h"
+#include "projectiles.h"
+#include "matrix.h"
 
 using namespace std;
 
 class ParticleSystem;
+class Projectiles;
 
 class Player : public Renderable, public Collidable {
 
@@ -24,7 +33,8 @@ class Player : public Renderable, public Collidable {
         float getSway();
         virtual void render();
         virtual void renderShadow() {};
-        static void transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude);
+        void transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude);
+        Matrix* getTransformationMatrix();
         static float scale;
 
         // Collision methods
@@ -32,6 +42,7 @@ class Player : public Renderable, public Collidable {
 
         // Get the position of the gun nozzle (for projectiles)
         float* getGunPosition();
+        void fire();
 
     private:
         float _altitude;
@@ -40,8 +51,10 @@ class Player : public Renderable, public Collidable {
         float _sway;
         float _swayDelta;
         float _maxSway;
-        Obj* _model;
+        Obj *_model;
         list< ParticleSystem* > _particleSystems;
+        Projectiles *_gunParticleSystem;
         void _renderLights();
-        float* _modelViewMatrix;
+        float *_modelViewMatrix;
+        Matrix *_transformationMatrix;
 };

@@ -228,6 +228,8 @@ void specialKeyInput(int key, int x, int y) {
         player->moveLaterally(-1);
     } else if (key == GLUT_KEY_UP) {
         doMove = !doMove;
+    } else if (key == GLUT_KEY_DOWN) {
+        player->fire();
     }
 }
 

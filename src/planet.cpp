@@ -27,10 +27,15 @@ void Planet::render() {
 
     gluQuadricNormals(quad, GL_TRUE);
 
-    // Rotate the sphere depeding on current time
-    glRotatef(this->_getRotation(), 0, 1, 0);
+    // Reset the transformation matrix
+    this->_transformationMatrix->reset();
 
-    glRotatef(90, 1, 0, 0);
+    // Rotate the sphere depeding on current time
+    this->_transformationMatrix->rotateY(this->_getRotation());
+
+    this->_transformationMatrix->rotateX(90);
+
+    glMultMatrixf(this->_transformationMatrix->getMatrix());
 
     gluSphere(quad, this->_radius, this->_sections, this->_sections);
     gluDeleteQuadric(quad);
@@ -53,6 +58,8 @@ Planet::Planet(int radius, float center_x, float center_y, float center_z) {
 
     // One minute per rotation
     this->_secondsPerRotation = 10;
+
+    this->_transformationMatrix = new Matrix();
 }
 
 float Planet::_getRotation() {

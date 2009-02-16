@@ -40,7 +40,11 @@ Player::Player(float altitude) {
     particleSystem->updatePosition(rightExaust, normal);
     this->_particleSystems.push_back(particleSystem);
 
-    this->_modelViewMatrix = NULL;
+    // And the gun particle system
+    this->_gunParticleSystem = new Projectiles(this);
+
+    this->_modelViewMatrix = new float[16];
+    this->_transformationMatrix = new Matrix();
 }
 
 void Player::moveLaterally(float lateralMovement) {
@@ -54,6 +58,9 @@ void Player::moveForward() {
     // Increment the sway
     this->_sway += this->_swayDelta;
     //if (this->_sway > this->_maxSway) this->_swayDelta * -1;
+
+    // Tick the particle systems
+    this->_gunParticleSystem->tick();
 }
 
 void Player::setCamera() {
@@ -84,32 +91,37 @@ void Player::render() {
     glPushMatrix();
 
     Player::transformPlayer(this->_rotation, this->_sway, this->_lateralDelta, this->_altitude);
-    // Save the transformation matrix
-    if (this->_modelViewMatrix == NULL) {
-        this->_modelViewMatrix = new float[16];
-    }
+    glMultMatrixf(this->_transformationMatrix->getMatrix());
 
+    // Save the transformation matrix
     glGetFloatv(GL_MODELVIEW_MATRIX, this->_modelViewMatrix);
 
     this->_renderLights();
     this->_model->render();
     glPopMatrix();
 
+    this->_gunParticleSystem->render();
+
     // Update the bounds
     this->_model->calculateBounds(this->_modelViewMatrix);
 }
 
 void Player::transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude) {
-    glRotatef(-1 * rotation - 7, 0, 1, 0);
+
+    // Reset the transformation matrix to the identity matrix
+    this->_transformationMatrix->reset();
+
+    // Rotate the craft around the planet
+    this->_transformationMatrix->rotateY(-1.0 * rotation - 7.0);
+
 
     // Sway the craft
     float _sway = sin(sway - 1) / 2;
-    glRotatef(-1 * lateralDelta + _sway, 1, 0, 0);
-
-    glTranslatef(0, 0, altitude - 2);
-    glRotatef(90, 1, 0, 0);
-    glRotatef(-90, 0, 1, 0);
-    glScalef(Player::scale, Player::scale, Player::scale);
+    this->_transformationMatrix->rotateX(-1 * lateralDelta + _sway);
+    this->_transformationMatrix->translate(0, 0, altitude - 2.0);
+    this->_transformationMatrix->rotateX(90);
+    this->_transformationMatrix->rotateY(-90);
+    this->_transformationMatrix->scale(Player::scale);
 }
 
 void Player::_renderLights() {
@@ -172,6 +184,10 @@ float Player::getSway() {
     return this->_sway;
 }
 
+Matrix* Player::getTransformationMatrix() {
+    return this->_transformationMatrix;
+}
+
 /******************************************************************************
  * Collision Detection
  *****************************************************************************/
@@ -186,13 +202,20 @@ float * Player::getGunPosition() {
     float *result = new float[4];
     float *tmp = new float[4];
 
-    vector<GLfloat> vertex = this->_model->getVertex(1);
+    vector<GLfloat> vertex = this->_model->getVertex(2811);
+    cout << "Vertex 0: " << vertex[0] << endl;
     tmp[0] = vertex[0];
     tmp[1] = vertex[1];
     tmp[2] = vertex[2];
+    tmp[3] = 1;
 
     // Transform the vertex with the current modelview matrix
     matrixMultiply(this->_modelViewMatrix, tmp, result);
 
     return result;
 }
+
+void Player::fire() {
+    this->_gunParticleSystem->emitParticles();
+}
+
