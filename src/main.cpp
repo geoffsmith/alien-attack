@@ -128,7 +128,16 @@ void renderScore() {
     stringstream outputStream;
     outputStream << Player::player->getScore();
 
+
     font->Render(outputStream.str().c_str());
+
+    // Show the lives
+    stringstream livesOutputStream;
+    glRasterPos3f(0.5, 0.5, 0);
+    font->FaceSize(18);
+
+    livesOutputStream << "Lives left: " << Player::player->getLives();
+    font->Render(livesOutputStream.str().c_str());
 
     glMatrixMode(GL_PROJECTION);
     glEnable(GL_DEPTH_TEST);
@@ -185,6 +194,7 @@ void move(int i) {
         // Move all the opponents
         Opponent::moveForwardAll();
 
+        Player::player->checkOpponentCollision();
         // TODO: Check for collision with player
         /*
         list< Opponent* >::iterator it = opponents.begin();

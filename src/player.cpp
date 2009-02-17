@@ -47,6 +47,9 @@ Player::Player(float altitude) {
 
     this->_modelViewMatrix = new float[16];
     this->_transformationMatrix = new Matrix();
+
+    // Set up a default of 3 lives
+    this->_lives = 3;
 }
 
 void Player::moveLaterally(float lateralMovement) {
@@ -196,6 +199,21 @@ Matrix* Player::getTransformationMatrix() {
     return this->_transformationMatrix;
 }
 
+void Player::checkOpponentCollision() {
+    // Pass all the opponents to the gun particle system
+    list<Opponent *>::iterator it = Opponent::opponents.begin();
+    for (; it != Opponent::opponents.end(); ++it) {
+        if (this->checkCollision(*it)) {
+            // Lose a life if we collide with a missile
+            this->_lives--;
+            // TODO: lose game when this reaches 0
+
+            // Remove the missile
+            (*it)->remove();
+        }
+    }
+}
+
 /******************************************************************************
  * Guns
  *****************************************************************************/
@@ -236,4 +254,8 @@ void Player::increaseScore() {
 
 unsigned int Player::getScore() {
     return this->_score;
+}
+
+unsigned int Player::getLives() {
+    return this->_lives;
 }

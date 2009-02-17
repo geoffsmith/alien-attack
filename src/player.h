@@ -40,6 +40,11 @@ class Player : public Renderable, public Collidable {
         // Game related methods
         void increaseScore();
         unsigned int getScore();
+        unsigned int getLives();
+
+
+        // Collision method
+        void checkOpponentCollision();
 
         // Get the position of the gun nozzle (for projectiles)
         float* getGunPosition();
@@ -65,4 +70,5 @@ class Player : public Renderable, public Collidable {
 
         // Game members
         unsigned int _score;
+        unsigned int _lives;
 };

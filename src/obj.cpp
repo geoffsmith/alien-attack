@@ -190,7 +190,7 @@ void Obj::_createDisplayList() {
     list< Face * >::iterator it = this->_faces.begin();
 
     // Keep track of the current texture so that we are not updating too often
-    GLuint currentTexture;
+    GLuint currentTexture = 0;
 
     // We're making a display list
     cout << "Creating display list for " << this->filename << ": " << this->_displayList << endl;
@@ -268,7 +268,7 @@ void Obj::_addMTL(string line) {
     Material* material = 0;
 
     // This is dirty, there is a load of white space on the end of the string
-    unsigned char* texture;
+    unsigned char* texture = NULL;
     string spath = filePath.string();
     trim_right(spath);
     const char* cpath = spath.c_str();

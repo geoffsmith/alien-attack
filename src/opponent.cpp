@@ -46,12 +46,16 @@ void Opponent::moveForward() {
     this->_rotation += 0.2;
 }
 
-void Opponent::triggerCollision() {
+void Opponent::remove() {
     // Remove from list
     Opponent::opponents.remove(this);
+}
 
+void Opponent::triggerCollision() {
     // Increment the player's score
     Player::player->increaseScore();
+
+    this->remove();
 }
 
 /******************************************************************************

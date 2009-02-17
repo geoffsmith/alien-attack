@@ -23,6 +23,7 @@ class Opponent : public Renderable, public Collidable {
         static list< Opponent* > opponents;
 
         virtual void triggerCollision();
+        void remove();
 
     private:
         Obj* _model;
