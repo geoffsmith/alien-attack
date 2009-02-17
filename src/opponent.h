@@ -12,7 +12,6 @@ class Opponent : public Renderable, public Collidable {
         void moveForward();
         virtual void render();
         virtual void renderShadow() {};
-        float* getBounds();
 
         static Opponent* generate();
 

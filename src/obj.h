@@ -38,11 +38,9 @@ class Obj {
     public:
         Obj(const char *filename, unsigned int displayList);
         void render();
-        void Obj::renderBounds();
         vector<GLfloat> getVertex(const unsigned int index);
         string filename;
-        void calculateBounds(Matrix *transformationMatrix);
-        float* getBounds();
+        void calculateBounds(Matrix *transformationMatrix, float *bounds);
 
         // A cache for loaded objects
         static list< Obj* > objectCache;
@@ -60,9 +58,6 @@ class Obj {
         void _addTextureCoord(string line);
         void _addNormal(string line);
         void _addFace(string line, Material* material);
-
-        // The bounds of this object (in world space)
-        float* _bounds;
 
         // The display list for this object
         unsigned int _displayList;

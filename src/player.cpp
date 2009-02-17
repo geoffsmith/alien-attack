@@ -104,9 +104,7 @@ void Player::render() {
     this->_gunParticleSystem->render();
 
     // Update the bounds
-    this->_model->calculateBounds(this->_transformationMatrix);
-
-    this->_model->renderBounds();
+    this->_model->calculateBounds(this->_transformationMatrix, this->_bounds);
 }
 
 void Player::transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude) {
@@ -197,20 +195,13 @@ Matrix* Player::getTransformationMatrix() {
 }
 
 /******************************************************************************
- * Collision Detection
- *****************************************************************************/
-float* Player::getBounds() {
-    return this->_model->getBounds();
-}
-
-/******************************************************************************
  * Guns
  *****************************************************************************/
 float * Player::getGunPosition() {
     float *result = new float[4];
     float *tmp = new float[4];
 
-    vector<GLfloat> vertex = this->_model->getVertex(1);
+    vector<GLfloat> vertex = this->_model->getVertex(1135);
     tmp[0] = vertex[0];
     tmp[1] = vertex[1];
     tmp[2] = vertex[2];

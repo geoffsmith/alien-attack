@@ -191,7 +191,7 @@ void move(int i) {
         list< Opponent* >::iterator it = opponents.begin();
         for (; it != opponents.end(); ++it) {
             // Check for collision with player
-            if (player->checkCollision((*it))) {
+            if ((*it)->checkCollision(player)) {
                 score += 100;
             }
 

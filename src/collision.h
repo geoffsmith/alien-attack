@@ -3,7 +3,11 @@
 class Collidable {
 
     public:
+        Collidable();
+        float* getBounds();
         virtual bool checkCollision(Collidable* other);
-        virtual float* getBounds() = 0;
         virtual ~Collidable() {};
+
+    protected:
+        float *_bounds;
 };

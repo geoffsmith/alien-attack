@@ -37,9 +37,6 @@ class Player : public Renderable, public Collidable {
         Matrix* getTransformationMatrix();
         static float scale;
 
-        // Collision methods
-        float* getBounds();
-
         // Get the position of the gun nozzle (for projectiles)
         float* getGunPosition();
         void fire();

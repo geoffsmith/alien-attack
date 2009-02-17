@@ -44,8 +44,7 @@ void Opponent::render() {
     glPopMatrix();
 
     // Calculate the bounds while we have the modelview matrix
-    this->_model->calculateBounds(&matrix);
-    this->_model->renderBounds();
+    this->_model->calculateBounds(&matrix, this->_bounds);
 }
 
 void Opponent::moveForward() {
@@ -62,11 +61,4 @@ Opponent* Opponent::generate() {
         }
     }
     return NULL;
-}
-
-/******************************************************************************
- * Collision Detection
- *****************************************************************************/
-float* Opponent::getBounds() {
-    return this->_model->getBounds();
 }

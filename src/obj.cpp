@@ -79,8 +79,6 @@ Obj::Obj(const char *filename, unsigned int displayList) {
 
     // Create the display list
     this->_createDisplayList();
-
-    this->_bounds = new float[6];
 }
 
 void Obj::_addVertex(string line) {
@@ -240,21 +238,6 @@ void Obj::render() {
     glCallList(this->_displayList);
 }
 
-void Obj::renderBounds() {
-    glPushAttrib(GL_POINT_BIT);
-    glPointSize(4);
-    glBegin(GL_POINTS);
-    for (int i = 0; i < 2; i++) {
-        for (int j = 2; j < 4; j++) {
-            for (int k = 4; k < 6; ++k) {
-                glVertex3f(this->_bounds[i], this->_bounds[j], this->_bounds[k]);
-            }
-        }
-    }
-    glEnd();
-    glPopAttrib();
-}
-
 vector<GLfloat> Obj::getVertex(const unsigned int index) {
     vector<GLfloat> result;
     if (index < this->_vertices.size()) {
@@ -336,11 +319,7 @@ Material* Obj::_findMaterial(string name) {
     return 0;
 }
 
-float* Obj::getBounds() {
-    return this->_bounds;
-}
-
-void Obj::calculateBounds(Matrix *transformationMatrix) {
+void Obj::calculateBounds(Matrix *transformationMatrix, float *bounds) {
     // Transform all the vertices into the right space.
     // ... and get the max / mins for each dimension
     float* result = new float[4];
@@ -363,34 +342,34 @@ void Obj::calculateBounds(Matrix *transformationMatrix) {
 
         // Reset the bounds on the first vertex
         if (resetBounds) {
-            this->_bounds[0] = result[0];
-            this->_bounds[1] = result[0];
-            this->_bounds[2] = result[1];
-            this->_bounds[3] = result[1];
-            this->_bounds[4] = result[2];
-            this->_bounds[5] = result[2];
+            bounds[0] = result[0];
+            bounds[1] = result[0];
+            bounds[2] = result[1];
+            bounds[3] = result[1];
+            bounds[4] = result[2];
+            bounds[5] = result[2];
             resetBounds = false;
             continue;
         }
 
         // Check if it is the largest / smallest of each dimension
-        if (result[0] < this->_bounds[0]) {
-            this->_bounds[0] = result[0];
+        if (result[0] < bounds[0]) {
+            bounds[0] = result[0];
         }
-        if (result[0] > this->_bounds[1]) {
-            this->_bounds[1] = result[0];
+        if (result[0] > bounds[1]) {
+            bounds[1] = result[0];
         }
-        if (result[1] < this->_bounds[2]) {
-            this->_bounds[2] = result[1];
+        if (result[1] < bounds[2]) {
+            bounds[2] = result[1];
         }
-        if (result[1] > this->_bounds[3]) {
-            this->_bounds[3] = result[1];
+        if (result[1] > bounds[3]) {
+            bounds[3] = result[1];
         }
-        if (result[2] < this->_bounds[4]) {
-            this->_bounds[4] = result[2];
+        if (result[2] < bounds[4]) {
+            bounds[4] = result[2];
         }
-        if (result[2] > this->_bounds[5]) {
-            this->_bounds[5] = result[2];
+        if (result[2] > bounds[5]) {
+            bounds[5] = result[2];
         }
     }
 
