@@ -6,8 +6,10 @@
 
 #include "player.h"
 #include "particle_system.h"
+#include "matrix.h"
 
 class Player;
+class Matrix;
 
 class Projectiles : public ParticleSystem2 {
     public:
@@ -19,4 +21,5 @@ class Projectiles : public ParticleSystem2 {
 
     private:
         Player *_player;
+        Matrix *_rotationMatrix;
 };

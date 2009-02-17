@@ -27,7 +27,7 @@ using namespace std;
 static list<Renderable *> renderables;
 static Player* player;
 static list< Opponent* > opponents;
-static int pause_time = 50; // milliseconds
+static int pause_time = 20; // milliseconds
 static GLfloat light_position[] = { 0.0, 0.0, 20.0, 0 };
 static GLfloat moon_light_position[] = { 0, 0, -20, 0 };
 static bool doMove = true;

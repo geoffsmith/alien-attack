@@ -17,6 +17,7 @@ class Matrix {
         float& operator[] (const unsigned int index);
         void rotateY(float angle);
         void rotateX(float angle);
+        void rotateZ(float angle);
         void translate(float x, float y, float z);
         void scale(float scale);
         void multiplyVector(float *vector, float *result);

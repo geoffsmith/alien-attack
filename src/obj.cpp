@@ -80,7 +80,7 @@ Obj::Obj(const char *filename, unsigned int displayList) {
     // Create the display list
     this->_createDisplayList();
 
-    this->_bounds = NULL;
+    this->_bounds = new float[6];
 }
 
 void Obj::_addVertex(string line) {
@@ -240,6 +240,21 @@ void Obj::render() {
     glCallList(this->_displayList);
 }
 
+void Obj::renderBounds() {
+    glPushAttrib(GL_POINT_BIT);
+    glPointSize(4);
+    glBegin(GL_POINTS);
+    for (int i = 0; i < 2; i++) {
+        for (int j = 2; j < 4; j++) {
+            for (int k = 4; k < 6; ++k) {
+                glVertex3f(this->_bounds[i], this->_bounds[j], this->_bounds[k]);
+            }
+        }
+    }
+    glEnd();
+    glPopAttrib();
+}
+
 vector<GLfloat> Obj::getVertex(const unsigned int index) {
     vector<GLfloat> result;
     if (index < this->_vertices.size()) {
@@ -325,18 +340,13 @@ float* Obj::getBounds() {
     return this->_bounds;
 }
 
-void Obj::calculateBounds(float *transformationMatrix) {
+void Obj::calculateBounds(Matrix *transformationMatrix) {
     // Transform all the vertices into the right space.
     // ... and get the max / mins for each dimension
     float* result = new float[4];
     float* vertex = new float[4];
     vector<GLfloat>* pointer;
     vertex[3] = 1;
-
-    // Set up the default bounds
-    if (this->_bounds == NULL) {
-        this->_bounds = new float[6];
-    }
 
     // We reset the bounds on the first iteration. This could be done by comparing
     // it to vertices->begin() but this way should be faster.
@@ -348,7 +358,8 @@ void Obj::calculateBounds(float *transformationMatrix) {
         
         // Transform the vertex
         vertex[0] = (*pointer)[0]; vertex[1] = (*pointer)[1]; vertex[2] = (*pointer)[2];
-        matrixMultiply(transformationMatrix, vertex, result);
+        //matrixMultiply(transformationMatrix, vertex, result);
+        transformationMatrix->multiplyVector(vertex, result);
 
         // Reset the bounds on the first vertex
         if (resetBounds) {

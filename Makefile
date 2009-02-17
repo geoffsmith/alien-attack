@@ -24,13 +24,13 @@ player.o: src/player.h src/player.cpp src/renderable.h src/collision.h matrix.o
 planet.o: src/planet.h src/planet.cpp src/renderable.h matrix.o
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o planet.o src/planet.cpp
 
-obj.o: src/obj.h src/obj.cpp
+obj.o: src/obj.h src/obj.cpp matrix.o
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o obj.o src/obj.cpp
 
 particle.o: src/particle.h src/particle.cpp src/renderable.h
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o particle.o src/particle.cpp
 
-opponent.o: src/opponent.h src/opponent.cpp src/renderable.h src/collision.h
+opponent.o: src/opponent.h src/opponent.cpp src/renderable.h src/collision.h matrix.o
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o opponent.o src/opponent.cpp
 
 shadow.o: src/shadow.h src/shadow.cpp

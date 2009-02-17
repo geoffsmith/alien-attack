@@ -10,6 +10,9 @@ struct Particle2 {
     unsigned int ticks;
 };
 
+/**
+ */
+
 class ParticleSystem2 {
 
     public:
@@ -44,4 +47,5 @@ class ParticleSystem2 {
         // The colours used randomly for the particles, the alpha will be decayed based on the
         // ticks of the particle and _maxTicks
         float (*_startColors)[4];
+        unsigned int _nColors;
 };

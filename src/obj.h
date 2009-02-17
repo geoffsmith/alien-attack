@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lib.h"
+#include "matrix.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -37,9 +38,10 @@ class Obj {
     public:
         Obj(const char *filename, unsigned int displayList);
         void render();
+        void Obj::renderBounds();
         vector<GLfloat> getVertex(const unsigned int index);
         string filename;
-        void calculateBounds(float *transformationMatrix);
+        void calculateBounds(Matrix *transformationMatrix);
         float* getBounds();
 
         // A cache for loaded objects

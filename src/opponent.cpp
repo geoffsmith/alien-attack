@@ -1,5 +1,6 @@
 #include "opponent.h"
 #include <iostream>
+#include "matrix.h"
 
 using namespace std;
 
@@ -19,27 +20,32 @@ Opponent::Opponent() {
 }
 
 void Opponent::render() {
-    float* modelViewMatrix = new float[16];
+    Matrix matrix;
     float scale = 0.25;
 
     glPushMatrix();
-    glRotatef(-1 * this->_rotation - 7, 0, 1, 0);
-    glRotatef(-1 * this->_lateralRotation, 1, 0, 0);
-    glTranslatef(0, 0, this->_altitude - 2.5);
-    glRotatef(90, 0, 0, 1);
-    glScalef(scale, scale, scale);
+
+    matrix.rotateY(-1 * this->_rotation - 7.0);
+    //glRotatef(-1 * this->_rotation - 7, 0, 1, 0);
+    matrix.rotateX(-1 * this->_lateralRotation);
+    //glRotatef(-1 * this->_lateralRotation, 1, 0, 0);
+    matrix.translate(0, 0, this->_altitude - 2.2);
+    //glTranslatef(0, 0, this->_altitude - 2.5);
+    matrix.rotateZ(90);
+    //glRotatef(90, 0, 0, 1);
+    matrix.scale(scale);
+    //glScalef(scale, scale, scale);
 
     // Save the modelview matrix before rendering
-    glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
+    //glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
+    glMultMatrixf(matrix.getMatrix());
 
     this->_model->render();
     glPopMatrix();
 
     // Calculate the bounds while we have the modelview matrix
-    this->_model->calculateBounds(modelViewMatrix);
-
-    // clean up
-    delete modelViewMatrix;
+    this->_model->calculateBounds(&matrix);
+    this->_model->renderBounds();
 }
 
 void Opponent::moveForward() {

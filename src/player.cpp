@@ -52,7 +52,7 @@ void Player::moveLaterally(float lateralMovement) {
 }
 
 void Player::moveForward() {
-    this->_rotation += 1;
+    this->_rotation += 0.5;
     if (this->_rotation >= 360) this->_rotation -= 360;
 
     // Increment the sway
@@ -66,6 +66,7 @@ void Player::moveForward() {
 void Player::setCamera() {
     // Rotate the camera up
     glRotatef(-45, 1, 0, 0);
+    //glRotatef(-90, 1, 0, 0);
 
     // Get the position of the camera
     glTranslatef(0, 0, -1 * (this->_altitude));
@@ -77,7 +78,7 @@ void Player::setCamera() {
     glRotatef(-90, 0, 0, 1);
 
     // Move the camera for the movement along
-    glRotatef(this->_rotation, 0, 1, 0);
+    glRotatef(this->_rotation - 2, 0, 1, 0);
 }
 
 void Player::render() {
@@ -103,7 +104,9 @@ void Player::render() {
     this->_gunParticleSystem->render();
 
     // Update the bounds
-    this->_model->calculateBounds(this->_modelViewMatrix);
+    this->_model->calculateBounds(this->_transformationMatrix);
+
+    this->_model->renderBounds();
 }
 
 void Player::transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelta, GLfloat altitude) {
@@ -114,13 +117,18 @@ void Player::transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelt
     // Rotate the craft around the planet
     this->_transformationMatrix->rotateY(-1.0 * rotation - 7.0);
 
-
     // Sway the craft
     float _sway = sin(sway - 1) / 2;
     this->_transformationMatrix->rotateX(-1 * lateralDelta + _sway);
-    this->_transformationMatrix->translate(0, 0, altitude - 2.0);
+
+    // Move the craft to altitude
+    this->_transformationMatrix->translate(0, 0, altitude - 1.7);
+
+    // Get the craft to point the right way
     this->_transformationMatrix->rotateX(90);
     this->_transformationMatrix->rotateY(-90);
+
+    // Scale the model down
     this->_transformationMatrix->scale(Player::scale);
 }
 
@@ -202,15 +210,14 @@ float * Player::getGunPosition() {
     float *result = new float[4];
     float *tmp = new float[4];
 
-    vector<GLfloat> vertex = this->_model->getVertex(2811);
-    cout << "Vertex 0: " << vertex[0] << endl;
+    vector<GLfloat> vertex = this->_model->getVertex(1);
     tmp[0] = vertex[0];
     tmp[1] = vertex[1];
     tmp[2] = vertex[2];
     tmp[3] = 1;
 
     // Transform the vertex with the current modelview matrix
-    matrixMultiply(this->_modelViewMatrix, tmp, result);
+    this->_transformationMatrix->multiplyVector(tmp, result);
 
     return result;
 }

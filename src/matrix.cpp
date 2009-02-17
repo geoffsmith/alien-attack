@@ -97,6 +97,22 @@ void Matrix::rotateX(float angle) {
     this->multiplyMatrix(&rotationMatrix);
 }
 
+void Matrix::rotateZ(float angle) {
+    // Convert into radians
+    float radians = angle * PI / 180.0;
+
+    // Build the rotation matrix
+    Matrix rotationMatrix;
+    rotationMatrix[0] = cos(radians);
+    rotationMatrix[1] = sin(radians);
+
+    rotationMatrix[4] = -1 * sin(radians);
+    rotationMatrix[5] = cos(radians);
+
+    // Multiply it into the current matrix
+    this->multiplyMatrix(&rotationMatrix);
+}
+
 void Matrix::translate(float x, float y, float z) {
     Matrix translationMatrix;
 
