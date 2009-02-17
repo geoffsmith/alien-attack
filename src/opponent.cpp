@@ -5,7 +5,7 @@
 using namespace std;
 
 const float Opponent::generateProbability = 0.3;
-const unsigned int Opponent::maxOpponents = 20;
+const unsigned int Opponent::maxOpponents = 5;
 list< Opponent* > Opponent::opponents;
 
 Opponent::Opponent() {
@@ -26,18 +26,12 @@ void Opponent::render() {
     glPushMatrix();
 
     matrix.rotateY(-1 * this->_rotation - 7.0);
-    //glRotatef(-1 * this->_rotation - 7, 0, 1, 0);
     matrix.rotateX(-1 * this->_lateralRotation);
-    //glRotatef(-1 * this->_lateralRotation, 1, 0, 0);
     matrix.translate(0, 0, this->_altitude - 2.2);
-    //glTranslatef(0, 0, this->_altitude - 2.5);
     matrix.rotateZ(90);
-    //glRotatef(90, 0, 0, 1);
     matrix.scale(scale);
-    //glScalef(scale, scale, scale);
 
     // Save the modelview matrix before rendering
-    //glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
     glMultMatrixf(matrix.getMatrix());
 
     this->_model->render();
@@ -51,6 +45,14 @@ void Opponent::moveForward() {
     this->_rotation += 0.2;
 }
 
+void Opponent::triggerCollision() {
+    // Remove from list
+    Opponent::opponents.remove(this);
+}
+
+/******************************************************************************
+ * Static methods
+ *****************************************************************************/
 Opponent* Opponent::generate() {
     if (Opponent::opponents.size() < Opponent::maxOpponents) {
         float prob = ( rand() % 100 ) / 100.0;
@@ -61,4 +63,20 @@ Opponent* Opponent::generate() {
         }
     }
     return NULL;
+}
+
+void Opponent::renderAll() {
+    // Render each opponent
+    list<Opponent *>::iterator it = Opponent::opponents.begin();
+    for (; it != Opponent::opponents.end(); ++it) {
+        (*it)->render();
+    }
+}
+
+void Opponent::moveForwardAll() {
+    // Move each opponent forward
+    list<Opponent *>::iterator it = Opponent::opponents.begin();
+    for (; it != Opponent::opponents.end(); ++it) {
+        (*it)->moveForward();
+    }
 }

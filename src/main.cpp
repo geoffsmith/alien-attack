@@ -99,11 +99,6 @@ void init_objects() {
     // Create the stars
     StarGenerator *stars = new StarGenerator();
     renderables.push_back(stars);
-
-    // Create an opponent
-    Opponent* opponent = new Opponent();
-    renderables.push_back(opponent);
-    opponents.push_back(opponent);
 }
 
 void reshape(int w, int h) {
@@ -167,6 +162,8 @@ void display(void) {
         ++it;
     }
 
+    Opponent::renderAll();
+
     //renderables.front()->renderShadow();
 
     // render shadows (planet is the first renderable)
@@ -188,24 +185,24 @@ void move(int i) {
         player->moveForward();
 
         // Move all the opponents
+        Opponent::moveForwardAll();
+
+        // TODO: Check for collision with player
+        /*
         list< Opponent* >::iterator it = opponents.begin();
         for (; it != opponents.end(); ++it) {
             // Check for collision with player
             if ((*it)->checkCollision(player)) {
                 score += 100;
             }
-
-            (*it)->moveForward();
         }
+        */
+        
+        // Check for projectile collisions with opponents
+        player->checkOpponentHit();
 
         // Generate new opponents
-        if (opponents.size() < 5) {
-            Opponent* newOpponent = Opponent::generate();
-            if (newOpponent != NULL) {
-                opponents.push_back(newOpponent);
-                renderables.push_back(newOpponent);
-            }
-        }
+        Opponent::generate();
     }
 
     // Mark the normal plane of the current window as needing to be redisplayed

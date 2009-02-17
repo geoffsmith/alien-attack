@@ -1,5 +1,6 @@
 #include "player.h"
 #include "obj.h"
+#include "opponent.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -217,3 +218,10 @@ void Player::fire() {
     this->_gunParticleSystem->emitParticles();
 }
 
+void Player::checkOpponentHit() {
+    // Pass all the opponents to the gun particle system
+    list<Opponent *>::iterator it = Opponent::opponents.begin();
+    for (; it != Opponent::opponents.end(); ++it) {
+        this->_gunParticleSystem->collisionDetect(*it);
+    }
+}

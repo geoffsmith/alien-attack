@@ -120,3 +120,33 @@ void ParticleSystem2::tick() {
 
     this->_updateParticles();
 }
+/******************************************************************************
+ * Collision detection
+ *****************************************************************************/
+void ParticleSystem2::collisionDetect(Collidable *collidable) {
+    // Check for a collision for each particle in each collidable
+    float *bounds;
+    bool boundsCheck = true;
+    unsigned int maxTicks = this->_maxTicks;
+    Particle2 *particle;
+
+    bounds = collidable->getBounds();
+    for (int i = 0; i < this->_maxParticles; ++i) {
+        particle = &(this->_particles[i]);
+        // Only check particle if it is alive
+        if (particle->ticks < maxTicks) {
+            boundsCheck = true;
+            // Check if this particle falls in the bounds of the current object
+            for (int j = 0; j < 3 && boundsCheck; ++j) {
+                if (particle->position[j] < bounds[2 * j]) boundsCheck = false;
+                if (particle->position[j] > bounds[2 * j + 1]) boundsCheck = false;
+            }
+            
+            // If the boundsCheck is still valid, trigger a collision
+            if (boundsCheck) {
+                collidable->triggerCollision();
+                return;
+            }
+        }
+    }
+}

@@ -40,6 +40,7 @@ class Player : public Renderable, public Collidable {
         // Get the position of the gun nozzle (for projectiles)
         float* getGunPosition();
         void fire();
+        void checkOpponentHit();
 
     private:
         float _altitude;

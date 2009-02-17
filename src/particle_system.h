@@ -1,5 +1,9 @@
 #pragma once 
 
+#include "collision.h"
+
+class Collidable;
+
 /*
  * The paticle's position is defined by the same parameters as the ship
  */
@@ -23,6 +27,9 @@ class ParticleSystem2 {
 
         // Create new particles / recycle dead ones
         void emitParticles();
+
+        // Do some collision detection
+        void collisionDetect(Collidable *collidable);
 
     protected:
         Particle2 *_particles;

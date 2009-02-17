@@ -14,11 +14,15 @@ class Opponent : public Renderable, public Collidable {
         virtual void renderShadow() {};
 
         static Opponent* generate();
+        static void renderAll();
+        static void moveForwardAll();
 
         // Probability of generating a new opponent on each cycle
         static const float generateProbability;
         static const unsigned int maxOpponents;
         static list< Opponent* > opponents;
+
+        virtual void triggerCollision();
 
     private:
         Obj* _model;
@@ -37,5 +41,4 @@ class Opponent : public Renderable, public Collidable {
          * from player
          */
         float _lateralRotation;
-
 };

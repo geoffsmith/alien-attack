@@ -18,7 +18,7 @@ $(TARGET): src/main.cpp planet.o  \
 collision.o: src/collision.h src/collision.cpp
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o collision.o src/collision.cpp
 
-player.o: src/player.h src/player.cpp src/renderable.h src/collision.h matrix.o
+player.o: src/player.h src/player.cpp src/renderable.h src/collision.h matrix.o opponent.o
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o player.o src/player.cpp
 
 planet.o: src/planet.h src/planet.cpp src/renderable.h matrix.o
@@ -45,7 +45,7 @@ star.o: src/star.h src/star.cpp
 jpeg.o: src/jpeg.h src/jpeg.cpp
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o jpeg.o src/jpeg.cpp
 
-particle_system.o: src/particle_system.h src/particle_system.cpp
+particle_system.o: src/particle_system.h src/particle_system.cpp collision.o
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o particle_system.o src/particle_system.cpp
 
 projectiles.o: src/projectiles.h src/projectiles.cpp particle_system.o
