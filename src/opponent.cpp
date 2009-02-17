@@ -1,6 +1,7 @@
 #include "opponent.h"
 #include <iostream>
 #include "matrix.h"
+#include "player.h"
 
 using namespace std;
 
@@ -48,6 +49,9 @@ void Opponent::moveForward() {
 void Opponent::triggerCollision() {
     // Remove from list
     Opponent::opponents.remove(this);
+
+    // Increment the player's score
+    Player::player->increaseScore();
 }
 
 /******************************************************************************

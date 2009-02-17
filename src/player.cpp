@@ -14,6 +14,7 @@
 using namespace std;
 
 GLfloat Player::scale = 0.00002;
+Player *Player::player = NULL;
 
 Player::Player(float altitude) {
     this->_altitude = altitude;
@@ -224,4 +225,15 @@ void Player::checkOpponentHit() {
     for (; it != Opponent::opponents.end(); ++it) {
         this->_gunParticleSystem->collisionDetect(*it);
     }
+}
+
+/****************************************************************************************
+ * Game related methods
+ ***************************************************************************************/
+void Player::increaseScore() {
+    this->_score += 100;
+}
+
+unsigned int Player::getScore() {
+    return this->_score;
 }

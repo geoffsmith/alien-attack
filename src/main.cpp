@@ -25,7 +25,6 @@
 using namespace std;
 
 static list<Renderable *> renderables;
-static Player* player;
 static list< Opponent* > opponents;
 static int pause_time = 20; // milliseconds
 static GLfloat light_position[] = { 0.0, 0.0, 20.0, 0 };
@@ -33,7 +32,6 @@ static GLfloat moon_light_position[] = { 0, 0, -20, 0 };
 static bool doMove = true;
 static string fontPath = "resources/airstrip.ttf";
 static FTGLPixmapFont* font;
-static int score = 0;
 
 void setupLighting();
 
@@ -93,8 +91,8 @@ void init_objects() {
     renderables.push_back(earth);
 
     // Setup the player
-    player = new Player(12);
-    renderables.push_back(player);
+    Player::player = new Player(12);
+    renderables.push_back(Player::player);
 
     // Create the stars
     StarGenerator *stars = new StarGenerator();
@@ -128,7 +126,7 @@ void renderScore() {
     font->FaceSize(36);
 
     stringstream outputStream;
-    outputStream << score;
+    outputStream << Player::player->getScore();
 
     font->Render(outputStream.str().c_str());
 
@@ -152,7 +150,7 @@ void display(void) {
 
     // Viewing transformation
     //gluLookAt(0.0, 5.0, -19.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    player->setCamera();
+    Player::player->setCamera();
 
 
     // iterate through the renderables
@@ -182,7 +180,7 @@ void display(void) {
 void move(int i) {
 
     if (doMove) {
-        player->moveForward();
+        Player::player->moveForward();
 
         // Move all the opponents
         Opponent::moveForwardAll();
@@ -199,7 +197,7 @@ void move(int i) {
         */
         
         // Check for projectile collisions with opponents
-        player->checkOpponentHit();
+        Player::player->checkOpponentHit();
 
         // Generate new opponents
         Opponent::generate();
@@ -220,13 +218,13 @@ void keyboardInput(unsigned char key, int x, int y) {
 
 void specialKeyInput(int key, int x, int y) {
     if (key == GLUT_KEY_RIGHT) {
-        player->moveLaterally(1);
+        Player::player->moveLaterally(1);
     } else if (key == GLUT_KEY_LEFT) {
-        player->moveLaterally(-1);
+        Player::player->moveLaterally(-1);
     } else if (key == GLUT_KEY_UP) {
         doMove = !doMove;
     } else if (key == GLUT_KEY_DOWN) {
-        player->fire();
+        Player::player->fire();
     }
 }
 

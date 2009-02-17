@@ -13,12 +13,12 @@ all: default
 
 $(TARGET): src/main.cpp planet.o  \
 	jpeg.o lib.o player.o obj.o star.o shadow.o particle.o opponent.o collision.o projectiles.o particle_system.o matrix.o
-	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp planet.o lib.o jpeg.o player.o obj.o star.o shadow.o particle.o opponent.o collision.o projectiles.o particle_system.o matrix.o
+	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp planet.o lib.o jpeg.o opponent.o player.o obj.o star.o shadow.o particle.o collision.o projectiles.o particle_system.o matrix.o
 
 collision.o: src/collision.h src/collision.cpp
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o collision.o src/collision.cpp
 
-player.o: src/player.h src/player.cpp src/renderable.h src/collision.h matrix.o opponent.o
+player.o: src/player.h src/player.cpp src/renderable.h src/collision.h matrix.o src/opponent.h
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o player.o src/player.cpp
 
 planet.o: src/planet.h src/planet.cpp src/renderable.h matrix.o
@@ -30,7 +30,7 @@ obj.o: src/obj.h src/obj.cpp matrix.o
 particle.o: src/particle.h src/particle.cpp src/renderable.h
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o particle.o src/particle.cpp
 
-opponent.o: src/opponent.h src/opponent.cpp src/renderable.h src/collision.h matrix.o
+opponent.o: src/opponent.h src/opponent.cpp src/renderable.h src/collision.h matrix.o src/player.h
 	$(CC) $(PROFILE) -Wall $(INCS) -c -o opponent.o src/opponent.cpp
 
 shadow.o: src/shadow.h src/shadow.cpp

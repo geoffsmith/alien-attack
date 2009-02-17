@@ -37,10 +37,17 @@ class Player : public Renderable, public Collidable {
         Matrix* getTransformationMatrix();
         static float scale;
 
+        // Game related methods
+        void increaseScore();
+        unsigned int getScore();
+
         // Get the position of the gun nozzle (for projectiles)
         float* getGunPosition();
         void fire();
         void checkOpponentHit();
+
+        // Add a static member so we can get the player anywhere
+        static Player *player;
 
     private:
         float _altitude;
@@ -55,4 +62,7 @@ class Player : public Renderable, public Collidable {
         void _renderLights();
         float *_modelViewMatrix;
         Matrix *_transformationMatrix;
+
+        // Game members
+        unsigned int _score;
 };
