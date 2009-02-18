@@ -14,8 +14,8 @@ default: $(TARGET)
 all: default
 
 $(TARGET): src/main.cpp planet.o  \
-	jpeg.o lib.o player.o obj.o star.o shadow.o particle.o opponent.o collision.o projectiles.o particle_system.o matrix.o
-	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp planet.o lib.o jpeg.o opponent.o player.o obj.o star.o shadow.o particle.o collision.o projectiles.o particle_system.o matrix.o
+	jpeg.o lib.o player.o obj.o star.o shadow.o opponent.o collision.o projectiles.o particle_system.o matrix.o exhaust.o
+	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp planet.o lib.o jpeg.o opponent.o player.o obj.o star.o shadow.o collision.o projectiles.o particle_system.o matrix.o exhaust.o
 
 collision.o: src/collision.h src/collision.cpp
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o collision.o src/collision.cpp
@@ -28,9 +28,6 @@ planet.o: src/planet.h src/planet.cpp src/renderable.h matrix.o
 
 obj.o: src/obj.h src/obj.cpp matrix.o
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o obj.o src/obj.cpp
-
-particle.o: src/particle.h src/particle.cpp src/renderable.h
-	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o particle.o src/particle.cpp
 
 opponent.o: src/opponent.h src/opponent.cpp src/renderable.h src/collision.h matrix.o src/player.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o opponent.o src/opponent.cpp
@@ -55,6 +52,9 @@ projectiles.o: src/projectiles.h src/projectiles.cpp particle_system.o
 
 matrix.o: src/matrix.h src/matrix.cpp
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o matrix.o src/matrix.cpp
+
+exhaust.o: src/exhaust.cpp src/exhaust.h src/particle_system.h src/player.h
+	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o exhaust.o src/exhaust.cpp
 
 clean:
 	-rm -f *.o $(TARGET)

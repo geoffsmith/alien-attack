@@ -30,17 +30,11 @@ Player::Player(float altitude) {
     this->_sway = 0;
 
     // Set up the particle system
-    vector<GLfloat> lightVertex = this->_model->getVertex(1375);
-    vector<GLfloat> leftExaust = this->_model->getVertex(1019);
-    vector<GLfloat> rightExaust = this->_model->getVertex(2496);
-    vector<GLfloat> normal; normal.push_back(0); normal.push_back(0); normal.push_back(-1);
-    ParticleSystem *particleSystem = new ParticleSystem(0.5, this);
-    particleSystem->updatePosition(leftExaust, normal);
-    this->_particleSystems.push_back(particleSystem);
+    Exhaust *exhaust = new Exhaust(this, 1019);
+    this->_exhauseParticleSystems.push_back(exhaust);
 
-    particleSystem = new ParticleSystem(0.5, this);
-    particleSystem->updatePosition(rightExaust, normal);
-    this->_particleSystems.push_back(particleSystem);
+    exhaust = new Exhaust(this, 2496);
+    this->_exhauseParticleSystems.push_back(exhaust);
 
     // And the gun particle system
     this->_gunParticleSystem = new Projectiles(this);
@@ -66,6 +60,12 @@ void Player::moveForward() {
 
     // Tick the particle systems
     this->_gunParticleSystem->tick();
+    list< Exhaust * >::iterator it = this->_exhauseParticleSystems.begin();
+    for (; it != this->_exhauseParticleSystems.end(); ++it) {
+        (*it)->tick();
+        (*it)->emitParticles();
+    }
+
 }
 
 void Player::setCamera() {
@@ -87,11 +87,6 @@ void Player::setCamera() {
 }
 
 void Player::render() {
-    // Render particle systems
-    list< ParticleSystem * >::iterator it = this->_particleSystems.begin();
-    for (; it != this->_particleSystems.end(); ++it) {
-        (*it)->render();
-    }
 
     // Move the model to the right place
     glPushMatrix();
@@ -106,7 +101,13 @@ void Player::render() {
     this->_model->render();
     glPopMatrix();
 
+    // Render particle systems
     this->_gunParticleSystem->render();
+
+    list< Exhaust * >::iterator it = this->_exhauseParticleSystems.begin();
+    for (; it != this->_exhauseParticleSystems.end(); ++it) {
+        (*it)->render();
+    }
 
     // Update the bounds
     this->_model->calculateBounds(this->_transformationMatrix, this->_bounds);
@@ -214,22 +215,25 @@ void Player::checkOpponentCollision() {
     }
 }
 
-/******************************************************************************
- * Guns
- *****************************************************************************/
-float * Player::getGunPosition() {
-    float *result = new float[4];
-    float *tmp = new float[4];
+void Player::_getTransformedVertex(unsigned int vertexIndex, float *position) {
+    float tmp[4];
 
-    vector<GLfloat> vertex = this->_model->getVertex(1135);
+    vector<GLfloat> vertex = this->_model->getVertex(vertexIndex);
     tmp[0] = vertex[0];
     tmp[1] = vertex[1];
     tmp[2] = vertex[2];
     tmp[3] = 1;
 
     // Transform the vertex with the current modelview matrix
-    this->_transformationMatrix->multiplyVector(tmp, result);
+    this->_transformationMatrix->multiplyVector(tmp, position);
+}
 
+/******************************************************************************
+ * Guns
+ *****************************************************************************/
+float * Player::getGunPosition() {
+    float *result = new float[4];
+    this->_getTransformedVertex(1135, result);
     return result;
 }
 
@@ -243,6 +247,23 @@ void Player::checkOpponentHit() {
     for (; it != Opponent::opponents.end(); ++it) {
         this->_gunParticleSystem->collisionDetect(*it);
     }
+}
+
+/****************************************************************************************
+ * Exhaust
+ ***************************************************************************************/
+void Player::getExhaustPosition(int vertex, float *position, float *normal) {
+    this->_getTransformedVertex(vertex, position);
+    
+    // The normal in this case is pointing backwards, we just transform (0, 0, 1);
+    float tmp[4];
+    tmp[0] = 0;
+    tmp[1] = 0;
+    tmp[2] = 1;
+    tmp[3] = 1;
+
+    // Transform the vertex with the current modelview matrix
+    this->_transformationMatrix->multiplyVectorSkipTranslation(tmp, normal);
 }
 
 /****************************************************************************************

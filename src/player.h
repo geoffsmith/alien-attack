@@ -9,14 +9,14 @@
 #include <vector>
 #include "renderable.h"
 #include "obj.h"
-#include "particle.h"
 #include "collision.h"
 #include "projectiles.h"
+#include "exhaust.h"
 #include "matrix.h"
 
 using namespace std;
 
-class ParticleSystem;
+class Exhaust;
 class Projectiles;
 
 class Player : public Renderable, public Collidable {
@@ -42,7 +42,6 @@ class Player : public Renderable, public Collidable {
         unsigned int getScore();
         unsigned int getLives();
 
-
         // Collision method
         void checkOpponentCollision();
 
@@ -50,6 +49,9 @@ class Player : public Renderable, public Collidable {
         float* getGunPosition();
         void fire();
         void checkOpponentHit();
+
+        // Get the position and normal of the exhausts
+        void getExhaustPosition(int vertex, float *position, float *normal);
 
         // Add a static member so we can get the player anywhere
         static Player *player;
@@ -62,7 +64,7 @@ class Player : public Renderable, public Collidable {
         float _swayDelta;
         float _maxSway;
         Obj *_model;
-        list< ParticleSystem* > _particleSystems;
+        list< Exhaust* > _exhauseParticleSystems;
         Projectiles *_gunParticleSystem;
         void _renderLights();
         float *_modelViewMatrix;
@@ -71,4 +73,7 @@ class Player : public Renderable, public Collidable {
         // Game members
         unsigned int _score;
         unsigned int _lives;
+
+        // Helpers
+        void _getTransformedVertex(unsigned int vertex, float *position);
 };

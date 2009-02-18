@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include <math.h>
+#include <iostream>
 
 #define PI 3.14159265
 
@@ -148,6 +149,21 @@ void Matrix::multiplyVector(float *vector, float *result) {
         sum = 0;
         for (int j = 0; j < 4; ++j) {
             sum += thisMatrix[j * 4 + i] * vector[j];
+        }
+        result[i] = sum;
+    }
+}
+
+void Matrix::multiplyVectorSkipTranslation(float *vector, float *result) {
+    float *thisMatrix = this->_matrix;
+    float sum;
+    for (int i = 0; i < 4; ++i) {
+        sum = 0;
+        for (int j = 0; j < 4; ++j) {
+            // If this is a translation item, skip
+            if (!((j * 4 + i >= 12) && (j * 4 + i < 15))) {
+                sum += thisMatrix[j * 4 + i] * vector[j];
+            }
         }
         result[i] = sum;
     }

@@ -24,6 +24,7 @@ class Matrix {
         void translate(float x, float y, float z);
         void scale(float scale);
         void multiplyVector(float *vector, float *result);
+        void multiplyVectorSkipTranslation(float *vector, float *result);
         void multiplyMatrix(Matrix *matrix);
         float* getMatrix();
 
