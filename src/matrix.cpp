@@ -11,6 +11,14 @@ Matrix::Matrix() {
     this->reset();
 }
 
+Matrix::Matrix(GLfloat *input) {
+    // Start with the identity matrix
+    this->_matrix = new float[16];
+    for (int i = 0; i < 16; ++i) {
+        this->_matrix[i] = input[i];
+    }
+}
+
 void Matrix::reset() {
     this->_matrix[0] = 1;
     this->_matrix[1] = 0;

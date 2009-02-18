@@ -1,20 +1,23 @@
 #include "particle_system.h"
+#include "lib.h"
+#include "matrix.h"
 #include <stdlib.h>
 #include <iostream>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
-
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
 
 using namespace std;
+
+int compare(const void *a, const void *b) {
+    float result = ( ((Particle2*)a)->z - ((Particle2*)b)->z);
+    if (result > 0.0) return 1;
+    else if (result < 0.0) return -1;
+    else return 0;
+}
 
 ParticleSystem2::ParticleSystem2() {
     // Set up the variables
     this->_maxTicks = 20;
-    this->_maxParticles = 1000;
+    this->_maxParticles = 400;
+    this->_maxSpriteSize = 5;
 
     // Pre-allocate the particles
     this->_particles = new Particle2[this->_maxParticles];
@@ -36,6 +39,10 @@ ParticleSystem2::ParticleSystem2() {
     this->_startColors[1][1] = 0.89;
     this->_startColors[1][2] = 0.988;
     this->_startColors[1][3] = 1;
+
+    // Load the particle sprite
+    glGenTextures(1, &(this->spriteTexture));
+    load_texture(this->spriteTexture, "resources/particle.jpg");
 }
 
 ParticleSystem2::~ParticleSystem2() {
@@ -62,13 +69,48 @@ void ParticleSystem2::render() {
     float *position;
     float *color;
 
+
     glPushAttrib(GL_POINT_BIT);
     glPushAttrib(GL_LIGHTING_BIT);
+    glPushAttrib(GL_COLOR_BUFFER_BIT);
 
     glDisable(GL_LIGHTING);
 
+    glEnable(GL_BLEND);
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+
+	glBindTexture(GL_TEXTURE_2D, this->spriteTexture);
+
+
+    // How the sprite will be modified by distance from viewer
+    float quadratic[] =  { 1.0f, 0.0f, 0.01f };
+    glPointParameterfvARB(GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic);
+
+    // Query the max size supported by the hardware
+    float maxSize = 0.0f;
+    glGetFloatv(GL_POINT_SIZE_MAX_ARB, &maxSize);
+    // Clamp to 100
+    if (maxSize > this->_maxSpriteSize) maxSize = this->_maxSpriteSize;
+
     // Make the points bigger
-    glPointSize(1.5);
+    glPointSize(maxSize);
+
+    // The alpha of a point is calculated to allow the fading of points 
+    // instead of shrinking them past a defined threshold size. The threshold 
+    // is defined by GL_POINT_FADE_THRESHOLD_SIZE_ARB and is not clamped to 
+    // the minimum and maximum point sizes.
+    glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
+
+    glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, 1.0f );
+    glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, maxSize );
+
+    // Specify point sprite texture coordinate replacement mode for each 
+    // texture unit
+    glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+    glEnable(GL_POINT_SPRITE_ARB);
+
+    // We need to sort the particles first
+    qsort(this->_particles, this->_maxParticles, sizeof(Particle2), compare);
 
     glBegin(GL_POINTS);
     for (unsigned int i = 0; i < this->_maxParticles; ++i) {
@@ -85,6 +127,9 @@ void ParticleSystem2::render() {
     }
     glEnd();
 
+    glDisable(GL_POINT_SPRITE_ARB);
+
+    glPopAttrib();
     glPopAttrib();
     glPopAttrib();
 }
@@ -119,7 +164,34 @@ void ParticleSystem2::tick() {
 
 
     this->_updateParticles();
+
+    this->_calculateZ();
 }
+
+void ParticleSystem2::_calculateZ() {
+    // Load the current modelview matrix
+    GLfloat *modelView = new GLfloat[16];
+    float tmp[4];
+    float result[4];
+    tmp[3] = 1;
+
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
+    Matrix matrix(modelView);
+
+    for (unsigned int i = 0; i < this->_maxParticles; ++i) {
+        if (this->_particles[i].ticks < this->_maxTicks) {
+            tmp[0] = this->_particles[i].position[0];
+            tmp[1] = this->_particles[i].position[1];
+            tmp[2] = this->_particles[i].position[2];
+
+            matrix.multiplyVector(tmp, result);
+
+            this->_particles[i].z = result[2];
+        }
+    }
+}
+
+
 /******************************************************************************
  * Collision detection
  *****************************************************************************/
@@ -131,7 +203,7 @@ void ParticleSystem2::collisionDetect(Collidable *collidable) {
     Particle2 *particle;
 
     bounds = collidable->getBounds();
-    for (int i = 0; i < this->_maxParticles; ++i) {
+    for (unsigned int i = 0; i < this->_maxParticles; ++i) {
         particle = &(this->_particles[i]);
         // Only check particle if it is alive
         if (particle->ticks < maxTicks) {

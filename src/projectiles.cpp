@@ -27,9 +27,10 @@ void Projectiles::_setStartPosition(Particle2 *particle) {
     float *gun = this->_player->getGunPosition();
 
     // Set this as the current position, randomising a little
-    particle->position[0] = gun[0] + (rand() % 200) / 5000.0 - 0.05;
-    particle->position[1] = gun[1] + (rand() % 200) / 5000.0 - 0.05;
-    particle->position[2] = gun[2] + (rand() % 200) / 5000.0 - 0.05;
+    float spread = 3000.0;
+    particle->position[0] = gun[0] + (rand() % 200) / spread - spread / 100000.0;
+    particle->position[1] = gun[1] + (rand() % 200) / spread - spread / 100000.0;
+    particle->position[2] = gun[2] + (rand() % 200) / spread - spread / 100000.0;
 
     delete[] gun;
 }

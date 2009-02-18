@@ -76,9 +76,7 @@ void Planet::setTexture(string path) {
 
     // load the texture
     glGenTextures(1, &(this->_texture));
-    unsigned char* texture;
-    load_texture(this->_texture, texture, this->_texturePath.c_str());
-    // TODO: clean up the texture
+    load_texture(this->_texture, this->_texturePath.c_str());
 }
 
 Planet::~Planet() {}

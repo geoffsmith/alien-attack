@@ -42,6 +42,24 @@ void loadFont() {
     }
 }
 
+void initPointSprite() {
+    // Check that the extension is availble
+    char *extensions = (char *)glGetString(GL_EXTENSIONS);
+    
+    // Check for GL_ARB_point_sprite
+    if (strstr(extensions, "GL_ARB_point_sprite") == NULL) {
+        cout << "ERROR: GL_ARB_point_sprite is not avaiable" << endl;
+        exit(1);
+    }
+
+    // Check for GL_ARB_point_parameters
+    if (strstr(extensions, "GL_ARB_point_sprite") == NULL) {
+        cout << "ERROR: GL_ARB_point_parameters is not available" << endl;
+        exit(1);
+    }
+
+}
+
 void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_SMOOTH);
@@ -63,6 +81,8 @@ void init(void) {
     srand(clock());
 
     loadFont();
+
+    initPointSprite();
 }
 
 void setupLighting() {

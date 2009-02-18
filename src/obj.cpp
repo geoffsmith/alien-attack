@@ -268,7 +268,6 @@ void Obj::_addMTL(string line) {
     Material* material = 0;
 
     // This is dirty, there is a load of white space on the end of the string
-    unsigned char* texture = NULL;
     string spath = filePath.string();
     trim_right(spath);
     const char* cpath = spath.c_str();
@@ -299,7 +298,7 @@ void Obj::_addMTL(string line) {
             // Load up the texture
             path texPath = mtlPath / parts[1];
             glGenTextures(1, &(material->textureMap));
-            load_texture(material->textureMap, texture, texPath.string().c_str());
+            load_texture(material->textureMap, texPath.string().c_str());
         }
     }
     file.close();

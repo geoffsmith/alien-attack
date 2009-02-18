@@ -11,8 +11,8 @@
 using namespace std;
 
 
-void load_texture(GLuint &tex_name, unsigned char *texture_image, const char *filename) {
-    
+void load_texture(GLuint &tex_name, const char *filename) {
+    unsigned char *texture_image;
     struct jpeg_decompress_struct cinfo;
 
     // Load the mars texture
@@ -35,6 +35,8 @@ void load_texture(GLuint &tex_name, unsigned char *texture_image, const char *fi
     if (error > 0) {
         cout << "Texture Error: " << gluErrorString(error) << " (" << error << ") in texture " << filename << endl;
     }
+
+    // TODO: Clean up image
 }
 
 void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]) {

@@ -9,9 +9,12 @@
  */
 #pragma once
 
+#include <OpenGL/gl.h>
+
 class Matrix {
     public:
         Matrix();
+        Matrix(GLfloat *input);
         ~Matrix();
         void reset();
         float& operator[] (const unsigned int index);

@@ -1,5 +1,9 @@
 #pragma once 
 
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <GLUT/glut.h>
+
 #include "collision.h"
 
 class Collidable;
@@ -11,6 +15,7 @@ struct Particle2 {
     float position[3];
     float vector[3];
     float color[4];
+    float z;
     unsigned int ticks;
 };
 
@@ -43,8 +48,13 @@ class ParticleSystem2 {
         // This method should be overridden to update the position of the particle
         virtual void _updateParticles() = 0;
 
+        virtual void _calculateZ();
+
         // The lifetime of a particle in terms of number of ticks
         unsigned int _maxTicks;
+
+        // Maxiumum size of a particle sprite
+        float _maxSpriteSize;
 
         // The max number of particles. There shouldn't ever be more than this at any point.
         // The number of particles to emit is this number divided by the number of ticks 
@@ -55,4 +65,7 @@ class ParticleSystem2 {
         // ticks of the particle and _maxTicks
         float (*_startColors)[4];
         unsigned int _nColors;
+
+        // For the particle texture
+        GLuint spriteTexture;
 };
