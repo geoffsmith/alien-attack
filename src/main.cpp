@@ -5,7 +5,7 @@
  */
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
+#include <SDL/SDL.h>
 #include <FTGL/FTGLPixmapFont.h>
 
 #include "planet.h"
@@ -26,7 +26,7 @@ using namespace std;
 
 static list<Renderable *> renderables;
 static list< Opponent* > opponents;
-static int pause_time = 20; // milliseconds
+//static int pause_time = 20; // milliseconds
 static GLfloat light_position[] = { 0.0, 0.0, 20.0, 0 };
 static GLfloat moon_light_position[] = { 0, 0, -20, 0 };
 static bool doMove = true;
@@ -201,15 +201,14 @@ void display(void) {
 
     renderScore();
 
-    // Swap and flush
-    glutSwapBuffers();
     glDisable(GL_TEXTURE_2D);
 }
 
-void move(int i) {
+void move() {
 
     if (doMove) {
         Player::player->moveForward();
+        Player::player->moveLaterally();
 
         // Move all the opponents
         Opponent::moveForwardAll();
@@ -232,61 +231,98 @@ void move(int i) {
         // Generate new opponents
         Opponent::generate();
     }
-
-    // Mark the normal plane of the current window as needing to be redisplayed
-    glutPostRedisplay();
-
-    // do this again in pause msecs
-    glutTimerFunc(pause_time, move, 0);
 }
 
-/**
- * Take keyboard input
- */
-void keyboardInput(unsigned char key, int x, int y) {
-}
-
-void specialKeyInput(int key, int x, int y) {
-    if (key == GLUT_KEY_RIGHT) {
-        Player::player->moveLaterally(1);
-    } else if (key == GLUT_KEY_LEFT) {
-        Player::player->moveLaterally(-1);
-    } else if (key == GLUT_KEY_UP) {
-        doMove = !doMove;
-    } else if (key == GLUT_KEY_DOWN) {
-        Player::player->fire();
+void handleKeyboard() {
+    // Poll for events
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym) {
+                    case SDLK_LEFT:
+                        Player::player->moveLeft();
+                        break;
+                    case SDLK_RIGHT:
+                        Player::player->moveRight();
+                        break;
+                    case SDLK_SPACE:
+                        Player::player->fire();
+                        break;
+                    case SDLK_p:
+                        doMove = !doMove;
+                        break;
+                    default:
+                        // do nothing
+                        break;
+                }
+                break;
+            case SDL_KEYUP:
+                switch (event.key.keysym.sym) {
+                    case SDLK_LEFT:
+                        Player::player->cancelMoveLeft();
+                        break;
+                    case SDLK_RIGHT:
+                        Player::player->cancelMoveRight();
+                        break;
+                    case SDLK_ESCAPE:
+                        exit(0);
+                    default:
+                        break;
+                }
+                break;
+            case SDL_QUIT:
+                exit(0);
+        }
     }
 }
 
 int main(int argc, char** argv) {
+    int error = SDL_Init(SDL_INIT_EVERYTHING);
 
-    // Extract any command line options intended for GLUT
-    glutInit(&argc, argv);
+    if (error < 0) {
+        cout << "Unable to init SDL: " << SDL_GetError();
+        exit(1);
+    }
+    atexit(SDL_Quit);
     
-    // Request an initial window size of 512 x 512
-    glutInitWindowSize(512, 512);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
-    // Request an initial display mode with RGB color and double buffer
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_STENCIL);
+    SDL_Surface *drawContext;
+    const SDL_VideoInfo *info = SDL_GetVideoInfo();
+    int bpp = info->vfmt->BitsPerPixel;
+    drawContext = SDL_SetVideoMode(500, 500, bpp, SDL_OPENGL);
 
-    // Create a window with given title
-    glutCreateWindow("OpenGL tutorial 1");
+    reshape(500, 500);
+
+    if (drawContext == 0) {
+        cout << "Failed to initialise video" << endl;
+        exit(1);
+    }
+
     init();
     init_objects();
 
-    // Register a display callback function
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-    glutKeyboardFunc(keyboardInput);
-    glutSpecialFunc(specialKeyInput);
+    // Enter the main look
+    while (1) {
+        // Take input
+        handleKeyboard();
 
-    // Register an idle callback function for animations
-    //glutIdleFunc(idle);
-    glutTimerFunc(pause_time, move, 0);
+        // Make the movements
+        move();
 
+        // Draw the scene
+        display();
 
-    // Enter the main GLUT event processing loop
-    glutMainLoop();
+        // Swap the buffers
+        SDL_GL_SwapBuffers();
 
+        SDL_Delay(20);
+    }
     return 0;
 }

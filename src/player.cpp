@@ -44,10 +44,16 @@ Player::Player(float altitude) {
 
     // Set up a default of 3 lives
     this->_lives = 3;
+
+    // The start movement deltas
+    this->_moveRight = false;
+    this->_moveLeft = false;
+    this->_movementDelta = 0.5;
 }
 
-void Player::moveLaterally(float lateralMovement) {
-    this->_lateralDelta += lateralMovement;
+void Player::moveLaterally() {
+    if (this->_moveLeft) this->_lateralDelta -= this->_movementDelta;
+    if (this->_moveRight) this->_lateralDelta += this->_movementDelta;
 }
 
 void Player::moveForward() {
@@ -279,4 +285,21 @@ unsigned int Player::getScore() {
 
 unsigned int Player::getLives() {
     return this->_lives;
+}
+
+/****************************************************************************************
+ * Movement
+ ***************************************************************************************/
+void Player::moveLeft() {
+    this->_moveLeft = true;
+}
+void Player::moveRight() {
+    this->_moveRight = true;
+}
+void Player::cancelMoveLeft() {
+    this->_moveLeft = false;
+}
+
+void Player::cancelMoveRight() {
+    this->_moveRight = false;
 }

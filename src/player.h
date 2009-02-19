@@ -23,7 +23,7 @@ class Player : public Renderable, public Collidable {
 
     public:
         Player(float altitude);
-        void moveLaterally(float lateralMovement);
+        void moveLaterally();
         void moveForward();
         void setCamera();
         float getRotationRad();
@@ -56,6 +56,12 @@ class Player : public Renderable, public Collidable {
         // Add a static member so we can get the player anywhere
         static Player *player;
 
+        // Movement
+        void moveLeft();
+        void moveRight();
+        void cancelMoveLeft();
+        void cancelMoveRight();
+
     private:
         float _altitude;
         float _rotation;
@@ -76,4 +82,9 @@ class Player : public Renderable, public Collidable {
 
         // Helpers
         void _getTransformedVertex(unsigned int vertex, float *position);
+
+        // Movement deltas
+        bool _moveLeft;
+        bool _moveRight;
+        float _movementDelta;
 };

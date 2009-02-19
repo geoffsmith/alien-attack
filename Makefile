@@ -1,6 +1,6 @@
 TARGET = bin/alien-attack
 
-LIBS = -lglut -lGLU -lGL -ljpeg -lboost_filesystem-mt -lboost_system-mt -lftgl -lfreetype
+LIBS =  -lGLU -lGL -lSDL -lSDLmain -ljpeg -lboost_filesystem-mt -lboost_system-mt -lftgl -lfreetype -framework Cocoa
 INCS = -I/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include/GL/ -I/opt/local/include/GL -I/opt/local/include -L/opt/local/lib -L/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/lib/ -I/Users/geoffsmith/usr/local/include/ -L/Users/geoffsmith/usr/local/lib -I/opt/local/include/freetype2/
 
 CC = /usr/bin/g++
