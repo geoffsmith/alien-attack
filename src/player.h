@@ -14,6 +14,8 @@
 #include "exhaust.h"
 #include "matrix.h"
 
+#include <SDL/SDL_mixer.h>
+
 using namespace std;
 
 class Exhaust;
@@ -87,4 +89,10 @@ class Player : public Renderable, public Collidable {
         bool _moveLeft;
         bool _moveRight;
         float _movementDelta;
+
+        GLuint _spriteTexture;
+
+        // Sounds
+        Mix_Chunk *_fireSound;
+        Mix_Chunk *_engineSound;
 };

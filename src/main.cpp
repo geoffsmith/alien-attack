@@ -6,6 +6,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
 #include <FTGL/FTGLPixmapFont.h>
 
 #include "planet.h"
@@ -40,6 +41,13 @@ void loadFont() {
     if (font->Error()) {
         cout << "There was an error loading the font: " << fontPath << endl;
     }
+}
+
+void initSDLAudio() {
+    if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024) < 0) {
+        cout << "Error initialising SDL audio" << endl;
+    }
+    Mix_Volume(-1, MIX_MAX_VOLUME);
 }
 
 void initPointSprite() {
@@ -305,6 +313,7 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+    initSDLAudio();
     init();
     init_objects();
 

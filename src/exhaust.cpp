@@ -30,7 +30,7 @@ void Exhaust::_setStartPosition(Particle2 *particle) {
     particle->vector[2] = normal[2];
 
     // Add a random movement in the vector direction to simulate a continuous trail
-    float scale = (rand() % 100) * 100;
+    float scale = (rand() % 100) * 40;
     particle->position[0] += particle->vector[0] * scale;
     particle->position[1] += particle->vector[1] * scale;
     particle->position[2] += particle->vector[2] * scale;

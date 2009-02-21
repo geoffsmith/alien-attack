@@ -21,4 +21,6 @@ class StarGenerator : public Renderable {
         virtual void renderShadow() {};
     private:
         list< vector<GLfloat> > _stars;
+        GLuint _spriteTexture;
+        float _spriteSize;
 };

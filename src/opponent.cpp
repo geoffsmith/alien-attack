@@ -18,6 +18,9 @@ Opponent::Opponent() {
     this->_rotation = rand() % 360;
     this->_lateralRotation = 10 - rand() % 20;
 
+    // Load the sounds
+    this->_explode = Mix_LoadWAV("resources/distant-explosion.wav");
+
 }
 
 void Opponent::render() {
@@ -56,6 +59,9 @@ void Opponent::triggerCollision() {
     Player::player->increaseScore();
 
     this->remove();
+
+    // Play sound
+    Mix_PlayChannel(-1, this->_explode, 0);
 }
 
 /******************************************************************************

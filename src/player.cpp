@@ -4,7 +4,6 @@
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
 
 #include <math.h>
 #include <iostream>
@@ -49,6 +48,20 @@ Player::Player(float altitude) {
     this->_moveRight = false;
     this->_moveLeft = false;
     this->_movementDelta = 0.5;
+
+    // Load the light flare sprite
+    glGenTextures(1, &(this->_spriteTexture));
+    load_texture(this->_spriteTexture, "resources/particle.jpg");
+
+    // Load the fire sound
+    this->_fireSound = Mix_LoadWAV("resources/fire.wav");
+    this->_engineSound = Mix_LoadWAV("resources/engine.wav");
+    if (this->_engineSound == NULL) {
+        cout << "Error loading fire.wav" << endl;
+        cout << "There was an error playing this sound: " << Mix_GetError() << endl;
+    }
+
+    Mix_PlayChannel(-1, this->_engineSound, -1);
 }
 
 void Player::moveLaterally() {
@@ -103,8 +116,8 @@ void Player::render() {
     // Save the transformation matrix
     glGetFloatv(GL_MODELVIEW_MATRIX, this->_modelViewMatrix);
 
-    this->_renderLights();
     this->_model->render();
+    this->_renderLights();
     glPopMatrix();
 
     // Render particle systems
@@ -143,43 +156,54 @@ void Player::transformPlayer(GLfloat rotation, GLfloat sway, GLfloat lateralDelt
 }
 
 void Player::_renderLights() {
-    // Get the right wing
-    glPushMatrix();
+    glPushAttrib(GL_POINT_BIT);
     glPushAttrib(GL_LIGHTING_BIT);
-    glPushAttrib(GL_TEXTURE_BIT);
-    vector<GLfloat> lightVertex = this->_model->getVertex(1375);
-    GLfloat tmp[4];
-    tmp[0] = lightVertex[0];
-    tmp[1] = lightVertex[1];
-    tmp[2] = lightVertex[2];
-    tmp[3] = 1;
-    glTranslatef(tmp[0], tmp[1], tmp[2]);
-    glLightfv(GL_LIGHT2, GL_POSITION, tmp);
-    glColor3f(1, 0, 0);
-    GLfloat emission[] = { 1, 0, 0, 0 };
-    GLfloat emission2[] = { 1, 0, 0, 0 };
-    glMaterialfv(GL_FRONT, GL_EMISSION, emission);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, emission2);
-    glutSolidSphere(500, 5, 5);
-    glPopMatrix();
-    glPushMatrix();
+    glPushAttrib(GL_COLOR_BUFFER_BIT);
+
+    glDisable(GL_LIGHTING);
+
+    glEnable(GL_BLEND);
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+
+	glBindTexture(GL_TEXTURE_2D, this->_spriteTexture);
+
+
+    // How the sprite will be modified by distance from viewer
+    float quadratic[] =  { 1.0f, 0.0f, 0.01f };
+    glPointParameterfvARB(GL_POINT_DISTANCE_ATTENUATION_ARB, quadratic);
+
+    // Make the points bigger
+    glPointSize(15);
+
+    // The alpha of a point is calculated to allow the fading of points 
+    // instead of shrinking them past a defined threshold size. The threshold 
+    // is defined by GL_POINT_FADE_THRESHOLD_SIZE_ARB and is not clamped to 
+    // the minimum and maximum point sizes.
+    glPointParameterfARB( GL_POINT_FADE_THRESHOLD_SIZE_ARB, 60.0f );
+
+    glPointParameterfARB( GL_POINT_SIZE_MIN_ARB, 1.0f );
+    glPointParameterfARB( GL_POINT_SIZE_MAX_ARB, 2 );
+
+    // Specify point sprite texture coordinate replacement mode for each 
+    // texture unit
+    glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+    glEnable(GL_POINT_SPRITE_ARB);
+
+    glBegin(GL_POINTS);
+
+    vector<GLfloat> lightVertex = this->_model->getVertex(1381);
+    glColor4f(1, 0, 0, 1);
+    glVertex3f(lightVertex[0], lightVertex[1], lightVertex[2]);
 
     lightVertex = this->_model->getVertex(2811);
-    tmp[0] = lightVertex[0];
-    tmp[1] = lightVertex[1];
-    tmp[2] = lightVertex[2];
-    tmp[3] = 1;
-    glTranslatef(tmp[0], tmp[1], tmp[2]);
-    glLightfv(GL_LIGHT2, GL_POSITION, tmp);
-    glColor3f(0, 1, 0);
-    GLfloat emission3[] = { 0, 1, 0, 0 };
-    GLfloat emission4[] = { 0, 1, 0, 0 };
-    glMaterialfv(GL_FRONT, GL_EMISSION, emission4);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, emission3);
-    glutSolidSphere(500, 5, 5);
+    glColor4f(0, 1, 0, 1);
+    glVertex3f(lightVertex[0], lightVertex[1], lightVertex[2]);
+    glEnd();
+
+    glDisable(GL_POINT_SPRITE_ARB);
     glPopAttrib();
     glPopAttrib();
-    glPopMatrix();
+    glPopAttrib();
 }
 
 float Player::getRotationRad() {
@@ -245,6 +269,12 @@ float * Player::getGunPosition() {
 
 void Player::fire() {
     this->_gunParticleSystem->emitParticles();
+
+    // Play the fire sound
+    int error = Mix_PlayChannel(-1, this->_fireSound, 0);
+    if (error == -1) {
+        cout << "There was an error playing this sound: " << Mix_GetError() << endl;
+    }
 }
 
 void Player::checkOpponentHit() {
@@ -265,7 +295,7 @@ void Player::getExhaustPosition(int vertex, float *position, float *normal) {
     float tmp[4];
     tmp[0] = 0;
     tmp[1] = 0;
-    tmp[2] = 1;
+    tmp[2] = -1;
     tmp[3] = 1;
 
     // Transform the vertex with the current modelview matrix

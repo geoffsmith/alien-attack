@@ -3,6 +3,8 @@
 #include "obj.h"
 #include "collision.h"
 
+#include <SDL/SDL_mixer.h>
+
 using namespace std;
 
 class Opponent : public Renderable, public Collidable {
@@ -42,4 +44,7 @@ class Opponent : public Renderable, public Collidable {
          * from player
          */
         float _lateralRotation;
+
+        // Sounds
+        Mix_Chunk *_explode;
 };
